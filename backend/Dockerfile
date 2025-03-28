@@ -19,18 +19,29 @@ COPY server-extension server-extension
 COPY tampere-resources tampere-resources
 COPY webapp-map webapp-map
 
+
+COPY oskari-frontend*.tar.gz ./
+RUN mkdir -p ./webapp-map/src/main/webapp/Oskari/ \
+    && tar -xz -C ./webapp-map/src/main/webapp/Oskari/ -f /opt/oskari/oskari-frontend*.tar.gz
+    # add the frontend to oskari-override, which is loaded in webapp-map/src/main/java/org.oskari/ClientResourceConfiguration
+RUN echo "oskari.client.version=dist/$(ls ./webapp-map/src/main/webapp/Oskari/dist )" > /opt/oskari/webapp-map/src/main/resources/oskari-docker.properties
+
+
 RUN mvn package
 
 FROM docker.io/library/jetty:9.4-jre17-alpine
 
 COPY --from=buildimage /opt/oskari/webapp-map/target/oskari-map.war webapps/
 COPY --from=buildimage /opt/oskari/webapp-map/target/oskari-map/WEB-INF/lib/postgresql-*.jar lib/ext/
-COPY ../../ubigu/oskari-backend-shared/docker/oskari-map.xml webapps/
-COPY ../../ubigu/oskari-backend-shared/docker/oskari.ini start.d/
-COPY ../../ubigu/oskari-backend-shared/docker/jetty-oskari.xml etc/
+COPY ./docker/oskari-map.xml webapps/
+COPY ./docker/oskari.ini start.d/
+COPY ./docker/jetty-oskari.xml etc/
+# Trust X-Forwarded headers
+COPY docker/forwarded-customizer.ini start.d/
+COPY docker/forwarded-customizer.xml etc/
 
-COPY ../../ubigu/oskari-backend-shared/docker/oskari-ext.properties resources/
-COPY ../../ubigu/oskari-backend-shared/docker/log4j2.xml resources/
+COPY ./docker/oskari-ext.properties resources/
+COPY ./docker/log4j2.xml resources/
 
 # context path in oskari-map.xml
 ENV OSKARI_CONTEXT_PATH="/oskari"
