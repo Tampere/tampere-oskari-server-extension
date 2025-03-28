@@ -1,3 +1,30 @@
+# Installation for tampere
+
+Oskari is deployed as containers in Tampere environment. Image is generated in
+GitHub actions. To update Oskari-core version, use the following instructions.
+
+## Updating Oskari version in container image
+
+1. Modify pom.xml in project root, and change property to match the wanted oskari version.
+2. Commit the version change, and other possible changes to git
+3. Create git tag: `git tag v2.13.1-tre3`.
+    * NOTE: Version must start with `v` for github actions to trigger image generation
+4. Push the tag to git: `git push origin v2.13.1-tre3`
+5. GitHub actions will now generate the container image.
+
+## Logging in to github container registry
+
+Container images are private per global organisation rules.
+An access token can be created to allow read-only access to the container registry: https://github.com/settings/tokens
+
+1. Generate classic access token with permission `read:packages`.
+    * Note: You might want to extend the expiration time of the access token
+    * Remember to copy the access token when displayed. If it is lost, a new token must be generated.
+2. Install the token to servers `podman login ghcr.io -u your-github-username-here`
+    * Paste the copied access token.
+
+
+
 # tampere-oskari-server-extension
 
 Tampere Oskari server extension
