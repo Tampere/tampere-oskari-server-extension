@@ -1,0 +1,26 @@
+table td {
+	text-align: left;
+	vertical-align: top; }
+  
+  table {
+	border-top-width: 0px; }
+  
+  /*tre */
+  .data-sources {
+		  display: inline-block !important;
+  }
+  
+  #tampere {
+		  padding-top: 40px !important;
+		  padding-bottom: 40px !important;
+		  padding-left: 14px !important;
+  }
+  
+  #maptools {
+		  overflow-x: hidden !important;
+  }
+  
+  input[value=METADATA_CATALOGUE_CHANNEL] {
+		  display:none;
+  }
+  
