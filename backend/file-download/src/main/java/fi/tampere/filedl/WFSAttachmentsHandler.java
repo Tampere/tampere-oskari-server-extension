@@ -7,6 +7,7 @@ import fi.nls.oskari.control.ActionException;
 import fi.nls.oskari.control.ActionParameters;
 import fi.nls.oskari.control.ActionParamsException;
 import fi.nls.oskari.control.RestActionHandler;
+import fi.nls.oskari.control.layer.PermissionHelper;
 import fi.nls.oskari.domain.map.OskariLayer;
 import fi.nls.oskari.log.LogFactory;
 import fi.nls.oskari.log.Logger;
@@ -24,6 +25,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.oskari.log.AuditLog;
+import org.oskari.permissions.PermissionService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,11 +55,15 @@ public class WFSAttachmentsHandler extends RestActionHandler {
 
     private FileService service;
     private FileDownloadAccessLogService accessLog;
+    private PermissionHelper permissionHelper;
 
     public void init() {
         super.init();
         service = new FileServiceMybatisImpl();
         accessLog = new FileDownloadAccessLogServiceMybatisImpl();
+        this.permissionHelper = new PermissionHelper(
+                OskariComponentManager.getComponentOfType(OskariLayerService.class),
+                OskariComponentManager.getComponentOfType(PermissionService.class));
     }
 
     public void handleGet(ActionParameters params) throws ActionException {
@@ -68,6 +74,9 @@ public class WFSAttachmentsHandler extends RestActionHandler {
             ResponseHelper.writeResponse(params, getLayerResponse(layerIds, params));
             return;
         }
+        // Will throw exception, if user does not have permission to the layer.
+        final OskariLayer ignore = permissionHelper.getLayer(layerId, params.getUser());
+
         int fileId = params.getHttpParam("fileId", -1);
         // return file
         if (fileId != -1) {
