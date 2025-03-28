@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="error" strict="false" name="OskariLogConfig">
+  <Properties>
+    <Property name="LOG_DIR">/log/</Property>
+  </Properties>
+  <Appenders>
+    <File name="File" fileName="${LOG_DIR}/oskari.log">
+          <PatternLayout pattern="%d %-5p %c - %m%n" />
+    </File>
+    <File name="ACCESS" fileName="${LOG_DIR}/layers.log">
+      <!-- timestamp + " - " + message + newline -->
+      <PatternLayout pattern="%d - %m%n" />
+    </File>
+  </Appenders>
+  <Loggers>
+    <Logger name="org.apache" level="warn">
+      <AppenderRef ref="File"/>
+    </Logger>
+    <Logger name="com.ibatis" level="warn">
+      <AppenderRef ref="File"/>
+    </Logger>
+    <Logger name="org.cometd" level="warn">
+      <AppenderRef ref="File"/>
+    </Logger>
+    <Logger name="org.quartz" level="warn">
+      <AppenderRef ref="File"/>
+    </Logger>
+    <Logger name="ACCESS" level="info" additivity="true">
+      <AppenderRef ref="ACCESS" />
+    </Logger>
+    <Root level="info">
+      <AppenderRef ref="File"/>
+    </Root>
+  </Loggers>
+</Configuration>
