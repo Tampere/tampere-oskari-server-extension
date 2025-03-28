@@ -11,7 +11,7 @@ COPY tampere-resources/pom.xml tampere-resources/pom.xml
 COPY webapp-map/pom.xml webapp-map/pom.xml
 
 # Cache maven dependencies, so we don't need to fetch them every time any file changes
-RUN mvn test verify package clean dependency:resolve dependency:resolve-plugins --fail-never && rm -Rf ./target ./*/target
+RUN mvn test verify package clean dependency:resolve dependency:resolve-plugins --fail-never --no-transfer-progress  && rm -Rf ./target ./*/target
 
 
 COPY file-download file-download
