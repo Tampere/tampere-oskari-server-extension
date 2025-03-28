@@ -27,7 +27,7 @@ RUN mkdir -p ./webapp-map/src/main/webapp/Oskari/ \
 RUN echo "oskari.client.version=dist/$(ls ./webapp-map/src/main/webapp/Oskari/dist )" > /opt/oskari/webapp-map/src/main/resources/oskari-docker.properties
 
 
-RUN mvn package
+RUN mvn --no-transfer-progress package
 
 FROM docker.io/library/jetty:9.4-jre17-alpine
 
@@ -44,4 +44,4 @@ COPY ./docker/oskari-ext.properties resources/
 COPY ./docker/log4j2.xml resources/
 
 # context path in oskari-map.xml
-ENV OSKARI_CONTEXT_PATH="/oskari"
+ENV OSKARI_CONTEXT_PATH="/"
