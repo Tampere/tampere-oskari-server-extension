@@ -24,7 +24,7 @@ COPY oskari-frontend*.tar.gz ./
 RUN mkdir -p ./webapp-map/src/main/webapp/Oskari/ \
     && tar -xz -C ./webapp-map/src/main/webapp/Oskari/ -f /opt/oskari/oskari-frontend*.tar.gz
     # add the frontend to oskari-override, which is loaded in webapp-map/src/main/java/org.oskari/ClientResourceConfiguration
-RUN echo "oskari.client.version=dist/$(ls ./webapp-map/src/main/webapp/Oskari/dist )" > /opt/oskari/webapp-map/src/main/resources/oskari-docker.properties
+RUN echo "oskari.client.version=dist/$(ls ./webapp-map/src/main/webapp/Oskari/dist )" > /opt/oskari/webapp-map/src/main/resources/oskari-override.properties
 
 
 RUN mvn --no-transfer-progress package
