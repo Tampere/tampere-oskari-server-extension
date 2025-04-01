@@ -1,4 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" isELIgnored="false" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -45,6 +48,13 @@
         src="${clientDomain}/Oskari${path}/index.js">
 </script>
 
+<!-- ############# Javascript ################# -->
+<!-- Debug stuff -->
+<!-- Parma login: ${param.login} -->
+<!-- UserIp: ${userIp} -->
+<!-- From intranet ${ fn:startsWith(userIp, '10.') } -->
+<!-- From intranet, and has loginparam: ${!empty param.login && fn:startsWith(userIp, '10.')} -->
+<!--  OSKARI -->
 
 <!-- ############# /Javascript ################# -->
 </body>

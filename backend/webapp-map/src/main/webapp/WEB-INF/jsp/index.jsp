@@ -171,7 +171,11 @@
 </div>
 
 <!-- ############# Javascript ################# -->
-
+<!-- Debug stuff -->
+<!-- Parma login: ${param.login} -->
+<!-- UserIp: ${userIp} -->
+<!-- From intranet ${ fn:startsWith(userIp, '10.')} -->
+<!-- From intranet, and has loginparam: ${!empty param.login && fn:startsWith(userIp, '10.')} -->
 <!--  OSKARI -->
 
 <script type="text/javascript">
