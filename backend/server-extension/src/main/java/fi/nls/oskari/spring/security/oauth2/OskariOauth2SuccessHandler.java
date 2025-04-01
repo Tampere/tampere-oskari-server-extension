@@ -10,6 +10,7 @@ import fi.nls.oskari.user.DatabaseUserService;
 import fi.tampere.sourcematerial.SourceMaterial;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
+@Profile("oauth2")
 @Component
 public class OskariOauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private static final Logger logger = LogFactory.getLogger(OskariOauth2SuccessHandler.class);

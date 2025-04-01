@@ -152,7 +152,7 @@
                     <c:if test="${!empty param.login || fn:startsWith(userIp, '10.')}">
                         <a href="${pageContext.request.contextPath}/oauth2">Kirjaudu TRE tunnuksilla</a><hr />
                     </c:if>
-                    <c:if test="${!empty param.login}">
+                    <c:if test="${!empty param.login && fn:startsWith(userIp, '10.')} ">
                         <form action='${pageContext.request.contextPath}/j_security_check' method="post" accept-charset="UTF-8">
                             <input size="16" id="username" name="j_username" type="text" placeholder="<spring:message code="username" text="Username" />" autofocus
                                 required>
