@@ -1,19 +1,23 @@
 services:
   oskari:
     build: ..
-    # volumes:
-     # - "./log:/log"
+    volumes:
+      - "./logs/oskari:/log:rw"
     ports:
       - "8080:8080"
-    depends_on:
-      - postgres
+    environment:
+      OSKARI_OSKARI_PROFILES: 'TreUsernameFilter'
+
+  #    depends_on:
+#y      - postgres
   postgres:
-    image: postgis/postgis:17-3.5-alpine
+    image: docker.io/postgis/postgis:17-3.5-alpine
     restart: always
     environment:
       - POSTGRES_PASSWORD=supersalainen_oskarin_salasana
       - POSTGRES_USER=oskari
       - POSTGRES_DB=oskari
     volumes:
+      - "./logs/postgres:/log:rw"
       - "./data:/var/lib/postgresql/data"
       - "./pg-initscripts/:/docker-entrypoint-initdb.d/:ro"
