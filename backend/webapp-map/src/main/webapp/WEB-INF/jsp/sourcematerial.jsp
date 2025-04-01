@@ -1,4 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" isELIgnored="false" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -45,6 +46,9 @@
         src="${clientDomain}/Oskari${path}/index.js">
 </script>
 
+<!-- ############# Javascript ################# -->
+
+<!--  OSKARI -->
 
 <!-- ############# /Javascript ################# -->
 </body>
