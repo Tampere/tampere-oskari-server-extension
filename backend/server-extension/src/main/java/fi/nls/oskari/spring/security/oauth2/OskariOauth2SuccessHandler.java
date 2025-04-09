@@ -7,7 +7,6 @@ import fi.nls.oskari.log.Logger;
 import fi.nls.oskari.service.ServiceException;
 import fi.nls.oskari.service.UserService;
 import fi.nls.oskari.user.DatabaseUserService;
-import fi.tampere.sourcematerial.SourceMaterial;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -29,8 +28,6 @@ import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -70,29 +67,7 @@ public class OskariOauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         User user = null;
         try {
             user = getUser(oidcUser);
-            OAuth2AuthorizedClient authorizedClient = clientService.loadAuthorizedClient(clientRegistration.getRegistrationId(), oidcUser.getName());
-            if (authorizedClient != null) {
-                @NotNull String attr7 = entraApiClient.getExtensionAttribute7(authorizedClient.getAccessToken().getTokenValue());
-                user.setRoles(Stream.concat(
-                        // Remove roles with the dynamic prefix
-                        user.getRoles().stream().filter(t -> !t.getName().startsWith(ATTR7_ROLE_PREFIX)),
-                        // Re-add roles from the attr7 ( organisation id )
-                        Arrays.stream( attr7.split(","))
-                        .filter(Objects::nonNull)
-                        .map(String::trim)
-                        .filter(r -> !r.isEmpty())
-                        .map(r -> {
-                            Role role = new Role();
-                            role.setName(ATTR7_ROLE_PREFIX + r);
-                            return role;
-                        }))
-                        .collect(Collectors.toSet()));
-            } else {
-                logger.warn("Authorized client is null when fetching organisation id for user ", user);
-            }
-
-            // add default role for logged in user
-            user.addRole(Role.getDefaultUserRole());
+            fixRolesFromEntraid(user, oidcUser);
 
             if (user.getId() == -1) {
                 userService.saveUser(user);
@@ -111,28 +86,54 @@ public class OskariOauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         super.onAuthenticationSuccess(request, response, authentication);
     }
 
-    private User getUser(DefaultOidcUser oud) throws ServiceException {
-        User user = userService.getUserByEmail(oud.getEmail());
+    /**
+     * ATTR7 is the users organisation unit id in EntraID
+     *
+     * 1. Remove existing roles having ATTR7-prefix
+     * 2. Fetch ATTR7 info from EntraID API.
+     * 3. Add the roles from ATTR7 to the user.
+     */
+    private void fixRolesFromEntraid(User user, DefaultOidcUser oidcUser) {
+        OAuth2AuthorizedClient authorizedClient = clientService.loadAuthorizedClient(clientRegistration.getRegistrationId(), oidcUser.getName());
+        if (authorizedClient != null) {
+            @NotNull String attr7 = entraApiClient.getExtensionAttribute7(authorizedClient.getAccessToken().getTokenValue());
+            user.setRoles(Stream.concat(
+                            // Remove roles with the dynamic prefix
+                            user.getRoles().stream().filter(t -> !t.getName().startsWith(ATTR7_ROLE_PREFIX)),
+                            // Re-add roles from the attr7 ( organisation id )
+                            Arrays.stream(attr7.split(","))
+                                    .map(String::trim)
+                                    .filter(r -> !r.isEmpty())
+                                    .map(r -> {
+                                        Role role = new Role();
+                                        role.setName(ATTR7_ROLE_PREFIX + r);
+                                        return role;
+                                    }))
+                    .collect(Collectors.toSet()));
+        } else {
+            logger.warn("Authorized client is null when fetching organisation id for user ", user);
+        }
+
+        // Make sure user has the defaultUser role.
+        final Role defaultUserRole = Role.getDefaultUserRole();
+        if(user.getRoles().stream().noneMatch(t -> t.getName().equals(defaultUserRole.getName()))) {
+            user.addRole(Role.getDefaultUserRole());
+        }
+    }
+
+    private User getUser(DefaultOidcUser oidcUser) throws ServiceException {
+        User user = userService.getUserByEmail(oidcUser.getEmail());
         // sdf is not threadsafe so create new for each login
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         if (user == null) {
             user = new User();
             user.setAttribute("created", format.format(new Date()));
-        } else {
-            // Keep previous roles that start with the source material roles prefix.
-            Set<Role> roles = user.getRoles().stream()
-                    .filter(r -> r.getName().startsWith(SourceMaterial.ROLE_PREFIX))
-                    .collect(Collectors.toSet());
-            // add the roles we get from auth
-            // TOOD: Fix roles
-            user.setRoles(roles);
-            // merge attributes
+            // add default role for logged in user
+            user.addRole(Role.getDefaultUserRole());
         }
-        // add default role for logged in user
-        user.addRole(Role.getDefaultUserRole());
 
         // Update user info
-        copyInfoToUser(user, oud);
+        copyInfoToUser(user, oidcUser);
         user.setAttribute("lastLogin", format.format(new Date()));
         user.setLastLogin(OffsetDateTime.now());
         return user;
@@ -144,7 +145,7 @@ public class OskariOauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         synchronized (session) {
             session.setAttribute(User.class.getName(), authenticatedUser);
             // Invalidate session after 10 hours, ie one workday
-            session.setMaxInactiveInterval(10*60*60);
+            session.setMaxInactiveInterval(10 * 60 * 60);
         }
     }
 
