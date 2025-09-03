@@ -49,6 +49,11 @@
 
     <repositories>
         <repository>
+            <!-- Github actions can log in automatically, with GITHUB_TOKEN-->
+            <id>ubigu-github-oskari-server</id>
+            <url>https://maven.pkg.github.com/ubigu/oskari-server-package</url>
+        </repository>
+        <repository>
             <id>oskari_org</id>
             <name>Oskari.org release repository</name>
             <url>https://oskari.org/nexus/content/repositories/releases/</url>

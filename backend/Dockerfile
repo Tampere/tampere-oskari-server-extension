@@ -32,13 +32,13 @@ RUN mvn --no-transfer-progress package
 FROM docker.io/library/jetty:9.4-jre17-alpine
 
 COPY --from=buildimage /opt/oskari/webapp-map/target/oskari-map.war webapps/
-COPY --from=buildimage /opt/oskari/webapp-map/target/oskari-map/WEB-INF/lib/postgresql-*.jar lib/ext/
-COPY ./docker/oskari-map.xml webapps/
-COPY ./docker/oskari.ini start.d/
-COPY ./docker/jetty-oskari.xml etc/
+# COPY --from=buildimage /opt/oskari/webapp-map/target/oskari-map/WEB-INF/lib/postgresql-*.jar lib/ext/
+#COPY ./docker/oskari-map.xml webapps/
+#COPY ./docker/oskari.ini start.d/
+#COPY ./docker/jetty-oskari.xml etc/
 # Trust X-Forwarded headers
-COPY docker/forwarded-customizer.ini start.d/
-COPY docker/forwarded-customizer.xml etc/
+#COPY docker/forwarded-customizer.ini start.d/
+#COPY docker/forwarded-customizer.xml etc/
 
 COPY ./docker/oskari-ext.properties resources/
 COPY ./docker/log4j2.xml resources/
