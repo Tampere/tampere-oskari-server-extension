@@ -1,4 +1,4 @@
-FROM docker.io/library/tomcat:11.0
+FROM docker.io/library/jetty:9.4-jre17-alpine
 
 COPY webapp-map/target/oskari-map.war webapps/
 COPY webapp-map/target/oskari-map/WEB-INF/lib/postgresql-*.jar lib/ext/
