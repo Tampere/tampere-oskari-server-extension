@@ -53,7 +53,7 @@ public class TreIntraDbloginFilterConfiguration extends WebSecurityConfigurerAda
          * - passwordParameter/usernameParameter matches the login form fields
          * - loginPage might not be needed since we permit all URLs
          */
-        http.authenticationProvider( new OskariAuthenticationProvider() );
+        http.authenticationProvider(new OskariAuthenticationProvider());
         http.headers().frameOptions().disable();
 
         // 3rd party cookie blockers don't really work with cookie based CSRF protection on embedded maps.
@@ -74,25 +74,27 @@ public class TreIntraDbloginFilterConfiguration extends WebSecurityConfigurerAda
 
     }
 
-    private final Filter treIpFilter = new OncePerRequestFilter() {
+    private static final Filter treIpFilter = new OncePerRequestFilter() {
 
         @Override
         protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
             logger.info("Executing filter for login requests to URI " + request.getRequestURI() + " from IP: " + request.getRemoteAddr());
-            for (IpAddressMatcher ipAddressMatcher : ipLoginWhitelist) {
-                if (ipAddressMatcher.matches(request)) {
-                    filterChain.doFilter(request, response);
-                }
+            if (isAllowedIp(request)) {
+                filterChain.doFilter(request, response);
             }
             logger.warn("Logging not allowed for IP: " + request.getRemoteAddr());
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Login forbidden from this network");
-
-
         }
 
     };
 
 
-
-
+    public boolean isAllowedIp(HttpServletRequest request) {
+        for (IpAddressMatcher ipAddressMatcher : ipLoginWhitelist) {
+            if (ipAddressMatcher.matches(request)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
