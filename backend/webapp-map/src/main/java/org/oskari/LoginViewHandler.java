@@ -1,19 +1,17 @@
 package org.oskari;
 
 import fi.nls.oskari.control.ActionParameters;
-import fi.nls.oskari.map.view.ViewService;
-import fi.nls.oskari.service.OskariComponentManager;
 import fi.nls.oskari.spring.SpringEnvHelper;
 import fi.nls.oskari.spring.extension.OskariParam;
 import fi.nls.oskari.spring.security.TreIntraDbloginFilterConfiguration;
-import fi.nls.oskari.util.PropertyUtil;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.Collection;
 
 @Controller
 public class LoginViewHandler {
@@ -24,13 +22,16 @@ public class LoginViewHandler {
     private final SpringEnvHelper env;
 
     @Autowired
-    public LoginViewHandler(WebSecurityConfigurerAdapter genericAdapter, SpringEnvHelper env) {
+    public LoginViewHandler(Collection<WebSecurityConfigurerAdapter> genericAdapters, SpringEnvHelper env) {
         this.env = env;
-        if (genericAdapter instanceof TreIntraDbloginFilterConfiguration) {
-            this.config = (TreIntraDbloginFilterConfiguration) genericAdapter;
-        } else {
-            this.config = null;
+        TreIntraDbloginFilterConfiguration filterCfg = null;
+        for (WebSecurityConfigurerAdapter genericAdapter : genericAdapters) {
+            if (genericAdapter instanceof TreIntraDbloginFilterConfiguration) {
+                filterCfg = (TreIntraDbloginFilterConfiguration) genericAdapter;
+                break;
+            }
         }
+        this.config = filterCfg;
     }
 
     @RequestMapping("/tre-login")
@@ -42,7 +43,7 @@ public class LoginViewHandler {
             params.getResponse().sendRedirect(params.getRequest().getContextPath());
             return "";
         }
-        if(!config.isAllowedIp(params.getRequest())){
+        if (!config.isAllowedIp(params.getRequest())) {
             params.getResponse().sendRedirect(params.getRequest().getContextPath() + "?loginState=failed");
             return "";
         }
