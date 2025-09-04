@@ -1,6 +1,8 @@
 package org.oskari;
 
 import fi.nls.oskari.control.ActionParameters;
+import fi.nls.oskari.log.LogFactory;
+import fi.nls.oskari.log.Logger;
 import fi.nls.oskari.spring.SpringEnvHelper;
 import fi.nls.oskari.spring.extension.OskariParam;
 import fi.nls.oskari.spring.security.TreIntraDbloginFilterConfiguration;
@@ -16,6 +18,8 @@ import java.util.Collection;
 @Controller
 public class LoginViewHandler {
 
+    private static final Logger log = LogFactory.getLogger(LoginViewHandler.class);
+
     @Nullable
     private final TreIntraDbloginFilterConfiguration config;
 
@@ -27,6 +31,7 @@ public class LoginViewHandler {
         TreIntraDbloginFilterConfiguration filterCfg = null;
         for (WebSecurityConfigurerAdapter genericAdapter : genericAdapters) {
             if (genericAdapter instanceof TreIntraDbloginFilterConfiguration) {
+
                 filterCfg = (TreIntraDbloginFilterConfiguration) genericAdapter;
                 break;
             }
@@ -35,17 +40,19 @@ public class LoginViewHandler {
     }
 
     @RequestMapping("/tre-login")
-    public String redirectToFileDL(Model model, @OskariParam ActionParameters params) throws Exception {
+    public String treLogin(Model model, @OskariParam ActionParameters params) throws Exception {
         model.addAttribute("_src_ip", params.getRequest().getRemoteAddr());
 
         if (config == null || !params.getUser().isGuest()) {
+            log.info("User already logged in or login is not enabled. ");
             // If filtering is not enabled, or user is logged in, redirect to frontpage
             params.getResponse().sendRedirect(params.getRequest().getContextPath());
-            return "";
+            return "tre-login";
         }
         if (!config.isAllowedIp(params.getRequest())) {
+            log.info("IP not allowed to login: " + params.getRequest().getRemoteAddr() );
             params.getResponse().sendRedirect(params.getRequest().getContextPath() + "?loginState=failed");
-            return "";
+            return "tre-login";
         }
 
         if (env.isDBLoginEnabled()) {

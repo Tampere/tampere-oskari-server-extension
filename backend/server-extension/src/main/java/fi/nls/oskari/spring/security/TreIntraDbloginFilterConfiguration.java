@@ -5,6 +5,7 @@ import fi.nls.oskari.log.Logger;
 import fi.nls.oskari.spring.SpringEnvHelper;
 import fi.nls.oskari.spring.security.database.OskariAuthenticationProvider;
 import fi.nls.oskari.spring.security.database.OskariAuthenticationSuccessHandler;
+import fi.nls.oskari.spring.security.oauth2.EntraIDGraphApiClient;
 import fi.nls.oskari.util.PropertyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
