@@ -82,6 +82,7 @@ public class TreIntraDbloginFilterConfiguration extends WebSecurityConfigurerAda
             logger.info("Executing filter for login requests to URI " + request.getRequestURI() + " from IP: " + request.getRemoteAddr());
             if (isAllowedIp(request)) {
                 filterChain.doFilter(request, response);
+                return;
             }
             logger.warn("Logging not allowed for IP: " + request.getRemoteAddr());
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Login forbidden from this network");
