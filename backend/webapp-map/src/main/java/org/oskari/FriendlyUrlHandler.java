@@ -3,7 +3,7 @@ package org.oskari;
 import fi.nls.oskari.control.ActionParameters;
 import fi.nls.oskari.map.view.ViewService;
 import fi.nls.oskari.service.OskariComponentManager;
-import fi.nls.oskari.spring.extension.OskariParam;
+import org.oskari.spring.extension.OskariParam;
 import fi.nls.oskari.util.PropertyUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

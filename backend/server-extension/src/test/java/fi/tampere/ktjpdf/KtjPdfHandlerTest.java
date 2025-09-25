@@ -1,15 +1,13 @@
 package fi.tampere.ktjpdf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.oskari.permissions.PermissionService;
 import org.oskari.permissions.model.Permission;
 import org.oskari.permissions.model.PermissionExternalType;
@@ -18,11 +16,12 @@ import org.oskari.permissions.model.Resource;
 import org.oskari.permissions.model.ResourceType;
 
 import fi.nls.oskari.control.ActionException;
-import fi.nls.oskari.domain.Role;
-import fi.nls.oskari.domain.User;
+
 import fi.nls.oskari.service.ServiceException;
 import fi.nls.oskari.util.DuplicateException;
 import fi.nls.oskari.util.PropertyUtil;
+import org.oskari.user.Role;
+import org.oskari.user.User;
 
 public class KtjPdfHandlerTest {
 

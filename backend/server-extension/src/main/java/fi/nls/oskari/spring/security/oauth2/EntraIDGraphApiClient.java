@@ -25,7 +25,6 @@ public class EntraIDGraphApiClient {
     private static final URI userinfoEndpoint = URI.create("https://graph.microsoft.com/v1.0/me?$select=onPremisesExtensionAttributes");
     private final ObjectMapper mapper;
 
-    @Autowired
     public EntraIDGraphApiClient() {
         mapper = new ObjectMapper();
     }

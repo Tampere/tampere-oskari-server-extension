@@ -3,12 +3,11 @@ package org.oskari;
 import fi.nls.oskari.control.ActionParameters;
 import fi.nls.oskari.log.LogFactory;
 import fi.nls.oskari.log.Logger;
-import fi.nls.oskari.spring.SpringEnvHelper;
-import fi.nls.oskari.spring.extension.OskariParam;
+import jakarta.annotation.Nullable;
+import org.oskari.spring.SpringEnvHelper;
+import org.oskari.spring.extension.OskariParam;
 import fi.nls.oskari.spring.security.TreIntraDbloginFilterConfiguration;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,17 +25,9 @@ public class LoginViewHandler {
     private final SpringEnvHelper env;
 
     @Autowired
-    public LoginViewHandler(Collection<WebSecurityConfigurerAdapter> genericAdapters, SpringEnvHelper env) {
+    public LoginViewHandler(@Nullable TreIntraDbloginFilterConfiguration treLoginConfig , SpringEnvHelper env) {
         this.env = env;
-        TreIntraDbloginFilterConfiguration filterCfg = null;
-        for (WebSecurityConfigurerAdapter genericAdapter : genericAdapters) {
-            if (genericAdapter instanceof TreIntraDbloginFilterConfiguration) {
-
-                filterCfg = (TreIntraDbloginFilterConfiguration) genericAdapter;
-                break;
-            }
-        }
-        this.config = filterCfg;
+        this.config = treLoginConfig;
     }
 
     @RequestMapping("/tre-login")

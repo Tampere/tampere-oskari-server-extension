@@ -34,14 +34,6 @@
             <artifactId>file-download</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!-- Replace icu4j version included by axiom-api with newer version
-        which does not brake .jar investigation performed by jetty-maven plugin  -->
-        <dependency>
-            <groupId>com.ibm.icu</groupId>
-            <artifactId>icu4j</artifactId>
-            <version>51.1</version>
-        </dependency>
-        <!-- oskari -->
 
         <dependency>
             <groupId>org.oskari</groupId>
@@ -67,18 +59,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j2-impl</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.oskari</groupId>
             <artifactId>servlet-map</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.ibm.icu</groupId>
-                    <artifactId>icu4j</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
 
@@ -93,25 +75,28 @@
         <dependency>
             <groupId>fi.nls.oskari.extras</groupId>
             <artifactId>service-terrain-profile</artifactId>
-            <version>${terrain.profile.version}</version>
+            <version>1.1</version>
         </dependency>
         <!-- /oskari-extensions -->
 
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-dbcp2</artifactId>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
         </dependency>
-
+        <!-- JSTL not needed for Jetty, but required by Tomcat -->
+        <dependency>
+            <groupId>org.glassfish.web</groupId>
+            <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.servlet.jsp.jstl</groupId>
+            <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
