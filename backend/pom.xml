@@ -11,11 +11,11 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <oskari.version>2.14.0</oskari.version>
+        <oskari.version>3.0.2</oskari.version>
         <!-- NOTE! this should match spring security version in oskari -->
-        <spring-security.version>5.8.14</spring-security.version>
+        <spring-security.version>6.4.2</spring-security.version>
         <terrain.profile.version>1.1</terrain.profile.version>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
     </properties>
 
     <dependencies>
@@ -51,12 +51,12 @@
         <repository>
             <id>oskari_org</id>
             <name>Oskari.org release repository</name>
-            <url>https://oskari.org/nexus/content/repositories/releases/</url>
+            <url>https://oskari.org/repository/maven/releases/</url>
         </repository>
         <repository>
             <id>oskari_org_snapshot</id>
             <name>Oskari.org snapshot repository</name>
-            <url>https://oskari.org/nexus/content/repositories/snapshots/</url>
+            <url>https://oskari.org/repository/maven/snapshots/</url>
         </repository>
     </repositories>
 
@@ -65,7 +65,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.13.0</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
@@ -74,9 +74,27 @@
 
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>3.3.1</version>
+                <version>3.4.0</version>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.cyclonedx</groupId>
+                <artifactId>cyclonedx-maven-plugin</artifactId>
+                <version>2.9.1</version>
+                <configuration>
+                    <projectType>application</projectType>
+                    <schemaVersion>1.4</schemaVersion>
+                    <includeBomSerialNumber>true</includeBomSerialNumber>
+                    <includeCompileScope>true</includeCompileScope>
+                    <includeProvidedScope>true</includeProvidedScope>
+                    <includeRuntimeScope>true</includeRuntimeScope>
+                    <includeSystemScope>true</includeSystemScope>
+                    <includeTestScope>true</includeTestScope>
+                    <includeLicenseText>false</includeLicenseText>
+                    <outputFormat>all</outputFormat>
+                    <outputName>bom</outputName>
                 </configuration>
             </plugin>
         </plugins>

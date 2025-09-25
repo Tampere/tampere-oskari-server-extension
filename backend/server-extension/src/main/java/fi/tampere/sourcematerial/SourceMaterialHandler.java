@@ -6,8 +6,6 @@ import fi.nls.oskari.control.ActionDeniedException;
 import fi.nls.oskari.control.ActionException;
 import fi.nls.oskari.control.ActionParameters;
 import fi.nls.oskari.control.RestActionHandler;
-import fi.nls.oskari.domain.Role;
-import fi.nls.oskari.domain.User;
 import fi.nls.oskari.log.LogFactory;
 import fi.nls.oskari.log.Logger;
 import fi.nls.oskari.map.layer.OskariLayerService;
@@ -20,6 +18,8 @@ import org.oskari.permissions.PermissionService;
 import org.oskari.permissions.model.PermissionType;
 import org.oskari.permissions.model.Resource;
 import org.oskari.permissions.model.ResourceType;
+import org.oskari.user.Role;
+import org.oskari.user.User;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,8 +27,9 @@ import java.util.stream.Collectors;
 @OskariActionRoute("SourceMaterial")
 public class SourceMaterialHandler extends RestActionHandler {
 
-    private static final Logger LOG = LogFactory.getLogger(SourceMaterial.class);
+    private static final Logger LOG = LogFactory.getLogger(SourceMaterialHandler.class);
 
+    @Override
     public void preProcess(ActionParameters params) throws ActionException {
         // 1) Check that the user has a role with LAHTO_prefix or ActionDenied
         if (getValidRoles(params.getUser()).isEmpty()) {
@@ -36,6 +37,7 @@ public class SourceMaterialHandler extends RestActionHandler {
         }
     }
 
+    @Override
     public void handleGet(ActionParameters params) throws ActionException {
         // 2) find user roles starting with LAHTO_-prefix
         JSONObject response = new JSONObject();

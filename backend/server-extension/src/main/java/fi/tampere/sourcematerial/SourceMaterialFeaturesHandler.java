@@ -4,11 +4,11 @@ import fi.nls.oskari.annotation.OskariActionRoute;
 import fi.nls.oskari.control.ActionException;
 import fi.nls.oskari.control.ActionParamsException;
 import fi.nls.oskari.control.feature.GetWFSFeaturesHandler;
-import fi.nls.oskari.domain.User;
 import fi.nls.oskari.domain.map.OskariLayer;
 import fi.nls.oskari.log.LogFactory;
 import fi.nls.oskari.log.Logger;
 import fi.nls.oskari.util.IOHelper;
+import org.oskari.user.User;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +20,7 @@ import java.util.Map;
 @OskariActionRoute("SourceMaterialFeatures")
 public class SourceMaterialFeaturesHandler extends GetWFSFeaturesHandler {
 
-    private static final Logger LOG = LogFactory.getLogger(SourceMaterial.class);
+    private static final Logger LOG = LogFactory.getLogger(SourceMaterialFeaturesHandler.class);
 
     @Override
     protected OskariLayer findMapLayer(String id, User user) throws ActionException {

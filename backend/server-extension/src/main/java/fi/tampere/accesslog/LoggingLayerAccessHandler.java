@@ -6,8 +6,8 @@ import fi.nls.oskari.log.Logger;
 import org.json.JSONObject;
 import org.oskari.service.user.LayerAccessHandler;
 
-import fi.nls.oskari.domain.User;
 import fi.nls.oskari.domain.map.OskariLayer;
+import org.oskari.user.User;
 
 
 @Oskari
