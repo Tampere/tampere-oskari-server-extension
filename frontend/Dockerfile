@@ -1,4 +1,4 @@
-FROM docker.io/library/node:18-bullseye as buildimage
+FROM docker.io/library/node:24-bullseye AS buildimage
 # Use bullseye, because python 3.11 causes problems. Bullseye has python 3.9
 
 RUN  export DEBIAN_FRONTEND=noninteractive && apt-get update \
