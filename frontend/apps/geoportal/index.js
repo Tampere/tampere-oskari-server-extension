@@ -26,28 +26,30 @@ jQuery(document).ready(function () {
             }
         }, 500);
     }
-
-    jQuery.ajax({
-        type: 'POST',
-        dataType: 'json',
-        data: getAppSetupParams,
-        url: window.location.pathname + 'action?action_route=GetAppSetup',
-        success: function (appSetup) {
-            var app = Oskari.app;
-            if (!appSetup.startupSequence) {
-                jQuery('#mapdiv').append('Unable to start');
-                return;
+    Oskari.app.loadAppSetup(ajaxUrl + 'action_route=GetAppSetup&mobile=' + Oskari.util.isMobile(), window.controlParams, onError, onSuccess);
+    /*
+        jQuery.ajax({
+            type: 'POST',
+            dataType: 'json',
+            data: getAppSetupParams,
+            url: window.location.pathname + 'action?action_route=GetAppSetup',
+            success: function (appSetup) {
+                var app = Oskari.app;
+                if (!appSetup.startupSequence) {
+                    jQuery('#mapdiv').append('Unable to start');
+                    return;
+                }
+                app.init(appSetup);
+                app.startApplication(function () {
+                    var sb = Oskari.getSandbox();
+                    gfiParamHandler(sb);
+                });
+            },
+            error: function (jqXHR, textStatus) {
+                if (jqXHR.status !== 0) {
+                    jQuery('#mapdiv').append('Unable to start');
+                }
             }
-            app.init(appSetup);
-            app.startApplication(function () {
-                var sb = Oskari.getSandbox();
-                gfiParamHandler(sb);
-            });
-        },
-        error: function (jqXHR, textStatus) {
-            if (jqXHR.status !== 0) {
-                jQuery('#mapdiv').append('Unable to start');
-            }
-        }
-    });
+        });
+     */
 });
