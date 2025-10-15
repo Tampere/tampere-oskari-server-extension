@@ -1,6 +1,8 @@
 name: Build and release frontend package
 
 on:
+  workflow_dispatch:
+
   push:
     tags:
       - "frontend-*"
@@ -19,22 +21,30 @@ jobs:
     steps:
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@main
+      - name: 'Install Node.js'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
       - name: 'Define frontend version'
         run: echo "FRONTEND_VERSION=$(echo "${{ github.ref_name }}" | sed -E 's/[^0-9]*(.*)$/\1/')" >> "$GITHUB_ENV"
+
       - name: 'Force tag to package version'
         working-directory: ./frontend/
         run: npm version $${{ env.FRONTEND_VERSION }}|| echo "Version already correct"
 
-      # Create a gzip file containing the built frontend
-      - name: 'Build production Inventory Image'
+      - name: 'Install dependencies'
         working-directory: ./frontend/
-        run: |
-          docker build ./ --target buildimage --tag ubigu-${{ github.ref_name }} --build-arg BUILD_TARGET=build
-      - name: 'Extract production gzip'
-        run: |
-          id=$(docker create ubigu-${{ github.ref_name }})
-          docker cp $id:/opt/oskari/dist - | gzip > oskari-${{ github.ref_name }}.tar.gz
-          docker rm -v $id
+        run: npm install
+
+      - name: 'Build frontend'
+        working-directory: ./frontend/
+        run: npm run build
+
+      - name: 'Run Package dist'
+        run: tar -czf oskari-${{ github.ref_name }}.tar.gz -C ./frontend/ dist
+
       - name: "Release zipped images"
         uses: softprops/action-gh-release@v2
         with:
