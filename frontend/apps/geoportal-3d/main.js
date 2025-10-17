@@ -28,9 +28,9 @@ import 'oskari-bundle!oskari-frontend/bundles/framework/mydata';
 import 'oskari-bundle!oskari-frontend/bundles/framework/maplegend';
 
 import 'oskari-bundle!oskari-frontend/bundles/framework/coordinatetool';
-import 'oskari-loader!oskari-frontend/packages/catalogue/metadatacatalogue/bundle.js';
-import 'oskari-loader!oskari-frontend/packages/catalogue/bundle/metadataflyout/bundle.js';
-import 'oskari-loader!oskari-frontend/packages/framework/featuredata2/bundle.js';
+import 'oskari-bundle!oskari-frontend/bundles/catalogue/metadatasearch';
+import 'oskari-bundle!oskari-frontend/bundles/catalogue/metadataflyout';
+import 'oskari-bundle!oskari-frontend/bundles/framework/featuredata';
 
 import 'oskari-bundle!oskari-frontend/bundles/framework/myplaces3';
 
@@ -45,7 +45,7 @@ import 'oskari-loader!oskari-frontend-contrib/packages/tampere/bundle/search-fro
 
 import 'oskari-lazy-bundle?admin-layereditor!oskari-frontend/bundles/admin/admin-layereditor';
 import 'oskari-lazy-bundle?admin-announcements!oskari-frontend/bundles/admin/admin-announcements';
-import 'oskari-lazy-loader?admin-layerrights!oskari-frontend/packages/framework/bundle/admin-layerrights/bundle.js';
+import 'oskari-lazy-bundle?admin-permissions!oskari-frontend/bundles/admin/admin-permissions';
 import 'oskari-lazy-bundle?admin-users!oskari-frontend/bundles/admin/admin-users';
 import 'oskari-lazy-bundle?admin!oskari-frontend/bundles/admin/admin';
 import 'oskari-lazy-loader?admin-wfs-search-channel!oskari-frontend-contrib/packages/tampere/bundle/admin-wfs-search-channel/bundle.js';

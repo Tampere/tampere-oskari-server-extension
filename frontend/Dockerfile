@@ -1,4 +1,4 @@
-FROM docker.io/library/node:18-bullseye as buildimage
+FROM docker.io/library/node:20-bullseye AS buildimage
 # Use bullseye, because python 3.11 causes problems. Bullseye has python 3.9
 
 RUN  export DEBIAN_FRONTEND=noninteractive && apt-get update \
@@ -20,7 +20,7 @@ COPY .storybook ./.storybook
 COPY .eslintrc.js ./
 
 ARG BUILD_TARGET=build
-RUN npm run $BUILD_TARGET
+RUN nice npm run "$BUILD_TARGET"
 
 
 

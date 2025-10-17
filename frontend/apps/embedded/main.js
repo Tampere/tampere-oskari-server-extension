@@ -22,7 +22,7 @@ import 'oskari-loader!oskari-frontend/packages/mapping/ol/maprotator/bundle.js';
 import 'oskari-loader!oskari-frontend/packages/framework/bundle/rpc/bundle.js';
 
 import 'oskari-lazy-bundle?maplegend!oskari-frontend/bundles/framework/maplegend';
-import 'oskari-lazy-loader?featuredata2!oskari-frontend/packages/framework/featuredata2/bundle.js';
+import 'oskari-lazy-bundle?featuredata!oskari-frontend/bundles/framework/featuredata';
 
 import '../../bundles/hacks.js';
 import './css/overwritten.css';
