@@ -25,15 +25,21 @@ jobs:
         working-directory: ./frontend/
         run: npm version $${{ env.FRONTEND_VERSION }}|| echo "Version already correct"
 
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: ${{ github.ref_name }}
+
       # Create a gzip file containing the built frontend
       - name: 'Build production Inventory Image'
         run: |
           docker build . --target buildimage --tag  ${{ steps.meta.outputs.tags }}-prod --build-arg BUILD_TARGET=build
-          docker push ${{ steps.meta.outputs.tags }}-prod
       - name: 'Build test Inventory Image'
         run: |
           docker build . --target buildimage --tag  ${{ steps.meta.outputs.tags }}-test --build-arg BUILD_TARGET=build:test
-          docker push  ${{ steps.meta.outputs.tags }}-test
       - name: 'Extract production gzip'
         run: |
           id=$(docker create  ${{ steps.meta.outputs.tags }}-prod)
