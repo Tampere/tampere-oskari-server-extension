@@ -27,16 +27,26 @@ jobs:
 
       # Create a gzip file containing the built frontend
       - name: 'Build production Inventory Image'
-        working-directory: ./frontend/
         run: |
-          docker build ./ --target buildimage --tag ubigu-${{ github.ref_name }} --build-arg BUILD_TARGET=build
+          docker build . --target buildimage --tag  ${{ steps.meta.outputs.tags }}-prod --build-arg BUILD_TARGET=build
+          docker push ${{ steps.meta.outputs.tags }}-prod
+      - name: 'Build test Inventory Image'
+        run: |
+          docker build . --target buildimage --tag  ${{ steps.meta.outputs.tags }}-test --build-arg BUILD_TARGET=build:test
+          docker push  ${{ steps.meta.outputs.tags }}-test
       - name: 'Extract production gzip'
         run: |
-          id=$(docker create ubigu-${{ github.ref_name }})
-          docker cp $id:/opt/oskari/dist - | gzip > oskari-${{ github.ref_name }}.tar.gz
+          id=$(docker create  ${{ steps.meta.outputs.tags }}-prod)
+          docker cp $id:/opt/oskari/dist - | gzip > oskari-frontend-${{ github.ref_name }}-prod.tar.gz
+          docker rm -v $id
+      - name: 'Extract test gzip'
+        run: |
+          id=$(docker create ${{ steps.meta.outputs.tags }}-test)
+          docker cp $id:/opt/oskari/dist - | gzip > oskari-frontend-${{ github.ref_name }}-test.tar.gz
           docker rm -v $id
       - name: "Release zipped images"
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            oskari-${{ github.ref_name }}.tar.gz
+            oskari-frontend-${{ github.ref_name }}-prod.tar.gz
+            oskari-frontend-${{ github.ref_name }}-test.tar.gz
