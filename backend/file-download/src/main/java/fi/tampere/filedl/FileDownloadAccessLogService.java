@@ -1,6 +1,7 @@
 package fi.tampere.filedl;
 
-import fi.nls.oskari.domain.User;
+
+import org.oskari.user.User;
 
 public interface FileDownloadAccessLogService {
 

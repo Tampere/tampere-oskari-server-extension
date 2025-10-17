@@ -6,13 +6,16 @@ services:
     ports:
       - "8080:8080"
     environment:
-      OSKARI_OSKARI_PROFILES: 'TreUsernameFilter'
-
+      OSKARI_OSKARI_PROFILES: 'TreLoginWhitelistConfig'
+      OSKARI_LOGIN_IP_WHITELIST: "192.168.0.0/16,10.0.0.0/8"
+      OSKARI_PROJECT_VERSION: "dist/3.1.0-tre01"
   #    depends_on:
 #y      - postgres
   postgres:
     image: docker.io/postgis/postgis:17-3.5-alpine
     restart: always
+    ports:
+      - "5432:5432"
     environment:
       - POSTGRES_PASSWORD=supersalainen_oskarin_salasana
       - POSTGRES_USER=oskari

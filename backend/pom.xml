@@ -11,9 +11,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <oskari.version>3.0.2</oskari.version>
+        <oskari.version>3.1.0</oskari.version>
         <!-- NOTE! this should match spring security version in oskari -->
-        <spring-security.version>6.4.2</spring-security.version>
         <terrain.profile.version>1.1</terrain.profile.version>
         <java.version>17</java.version>
     </properties>
@@ -34,16 +33,7 @@
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-oauth2-client</artifactId>
-                <version>${spring-security.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-oauth2-jose</artifactId>
-                <version>${spring-security.version}</version>
-            </dependency>
+
         </dependencies>
     </dependencyManagement>
 

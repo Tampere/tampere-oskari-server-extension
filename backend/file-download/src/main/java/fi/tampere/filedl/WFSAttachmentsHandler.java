@@ -17,18 +17,21 @@ import fi.nls.oskari.service.ServiceException;
 import fi.nls.oskari.util.ConversionHelper;
 import fi.nls.oskari.util.IOHelper;
 import fi.nls.oskari.util.ResponseHelper;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.fileupload2.core.DiskFileItem;
+import org.apache.commons.fileupload2.core.DiskFileItemFactory;
+import org.apache.commons.fileupload2.core.FileItem;
+import org.apache.commons.fileupload2.core.FileUploadException;
+import org.apache.commons.fileupload2.jakarta.servlet6.JakartaServletFileUpload;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.oskari.log.AuditLog;
 import org.oskari.permissions.PermissionService;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
@@ -47,7 +50,7 @@ public class WFSAttachmentsHandler extends RestActionHandler {
     private static final int MB = 1024 * 1024;
     // Store files smaller than 16mb in memory instead of writing them to disk
     private static final int MAX_SIZE_MEMORY = 16 * MB;
-    private static final DiskFileItemFactory diskFileItemFactory = new DiskFileItemFactory(MAX_SIZE_MEMORY, null);
+    private static final DiskFileItemFactory diskFileItemFactory = DiskFileItemFactory.builder().setBufferSize(MAX_SIZE_MEMORY).get();
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private static final String PARAM_LAYER = "layerId";
@@ -167,7 +170,7 @@ public class WFSAttachmentsHandler extends RestActionHandler {
         params.requireAdminUser();
         // TODO: check permissions for non-admin
 
-        List<FileItem> fileItems = parseRequest(params.getRequest());
+        List<DiskFileItem> fileItems = parseRequest(params.getRequest());
         Map<String, String> parameters = getFormParams(fileItems);
         fileItems = getFiles(fileItems);
         int layerId = ConversionHelper.getInt(parameters.get(PARAM_LAYER), -1);
@@ -177,7 +180,7 @@ public class WFSAttachmentsHandler extends RestActionHandler {
 
         try {
             List<WFSAttachment> writtenFiles = new ArrayList<>(fileItems.size());
-            for (FileItem f : fileItems) {
+            for (DiskFileItem f : fileItems) {
                 try (WFSAttachmentFile file = new WFSAttachmentFile(f.getInputStream(), f.getSize())) {
                     String[] name = FileService.getBaseAndExtension(f.getName());
                     file.setFeatureId(name[0]);
@@ -205,7 +208,13 @@ public class WFSAttachmentsHandler extends RestActionHandler {
         } catch (JSONException | IOException | ServiceException e) {
             throw new ActionException("Unable to save files", e);
         } finally {
-            fileItems.forEach(FileItem::delete);
+            for (FileItem fileItem : fileItems) {
+                try {
+                    fileItem.delete();
+                } catch (IOException e) {
+                    LOG.error("Error deleting file", e);
+                }
+            }
         }
     }
 
@@ -277,23 +286,23 @@ public class WFSAttachmentsHandler extends RestActionHandler {
         return Integer.toString(id);
     }
 
-    private List<FileItem> parseRequest(HttpServletRequest request) throws ActionException {
+    private List<DiskFileItem> parseRequest(HttpServletRequest request) throws ActionException {
         try {
             request.setCharacterEncoding("UTF-8");
-            ServletFileUpload upload = new ServletFileUpload(diskFileItemFactory);
+            JakartaServletFileUpload<DiskFileItem, DiskFileItemFactory> upload = new JakartaServletFileUpload<>(diskFileItemFactory);
             return upload.parseRequest(request);
         } catch (UnsupportedEncodingException | FileUploadException e) {
             throw new ActionException("Failed to read request", e);
         }
     }
 
-    private List<FileItem> getFiles(List<FileItem> fileItems) {
+    private List<DiskFileItem> getFiles(List<DiskFileItem> fileItems) {
         return fileItems.stream()
                 .filter(f -> !f.isFormField())
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    private Map<String, String> getFormParams(List<FileItem> fileItems) {
+    private Map<String, String> getFormParams(List<DiskFileItem> fileItems) {
         return fileItems.stream()
                 .filter(f -> f.isFormField())
                 .collect(Collectors.toMap(

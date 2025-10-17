@@ -29,18 +29,18 @@ RUN echo "oskari.client.version=dist/$(ls ./webapp-map/src/main/webapp/Oskari/di
 
 RUN mvn --no-transfer-progress package
 
-FROM docker.io/library/jetty:9.4-jre17-alpine
+FROM docker.io/library/tomcat:10-jdk17
 
 COPY --from=buildimage /opt/oskari/webapp-map/target/oskari-map.war webapps/
-COPY --from=buildimage /opt/oskari/webapp-map/target/oskari-map/WEB-INF/lib/postgresql-*.jar lib/ext/
+COPY --from=buildimage /opt/oskari/webapp-map/target/oskari-map/WEB-INF/lib/postgresql-*.jar lib/
 COPY ./docker/oskari-map.xml webapps/
-COPY ./docker/oskari.ini start.d/
-COPY ./docker/jetty-oskari.xml etc/
+#COPY ./docker/oskari.ini start.d/
+#COPY ./docker/jetty-oskari.xml etc/
 # Trust X-Forwarded headers
-COPY docker/forwarded-customizer.ini start.d/
-COPY docker/forwarded-customizer.xml etc/
+#COPY docker/forwarded-customizer.ini start.d/
+#COPY docker/forwarded-customizer.xml etc/
 
-COPY ./docker/oskari-ext.properties resources/
+#COPY ./docker/oskari-ext.properties resources/
 COPY ./docker/log4j2.xml resources/
 
 # context path in oskari-map.xml
