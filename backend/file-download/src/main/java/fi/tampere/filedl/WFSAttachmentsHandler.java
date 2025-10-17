@@ -40,6 +40,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @OskariActionRoute("WFSAttachments")
@@ -201,7 +202,7 @@ public class WFSAttachmentsHandler extends RestActionHandler {
             AuditLog.user(params.getClientIp(), params.getUser()).
                     withParam("layer", layerId).
                     withParam("files", writtenFiles.stream().map(
-                            f -> f.getFeatureId() + " (" + f.getLocale() + ")")
+                                    f -> f.getFeatureId() + " (" + f.getLocale() + ")")
                             .collect(Collectors.joining(","))).
                     added(getName());
             ResponseHelper.writeResponse(params, new JSONArray(MAPPER.writeValueAsString(writtenFiles)));
@@ -252,13 +253,13 @@ public class WFSAttachmentsHandler extends RestActionHandler {
 
     private String getContentType(String extension) {
         switch (extension) {
-        case "gpkg":
-            return "application/geopackage+sqlite3";
-        case "tif":
-            return "image/tiff";
-        case "las":
-        default:
-            return "application/octet-stream";
+            case "gpkg":
+                return "application/geopackage+sqlite3";
+            case "tif":
+                return "image/tiff";
+            case "las":
+            default:
+                return "application/octet-stream";
         }
     }
 
@@ -302,12 +303,22 @@ public class WFSAttachmentsHandler extends RestActionHandler {
                 .toList();
     }
 
+    private static record Tuple(String fieldName, String value) {
+    }
+
     private Map<String, String> getFormParams(List<DiskFileItem> fileItems) {
         return fileItems.stream()
-                .filter(f -> f.isFormField())
-                .collect(Collectors.toMap(
-                        f -> f.getFieldName(),
-                        f -> new String(f.get(), StandardCharsets.UTF_8)));
+                .filter(DiskFileItem::isFormField)
+                .map(f -> {
+                    try {
+                        return new Tuple(f.getFieldName(), new String(f.get(), StandardCharsets.UTF_8));
+                    } catch (IOException e) {
+                        LOG.warn("Field name error ",e.getCause());
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toMap(Tuple::fieldName, Tuple::value));
     }
 
 }

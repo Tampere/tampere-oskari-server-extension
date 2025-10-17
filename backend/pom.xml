@@ -13,6 +13,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <oskari.version>3.1.0</oskari.version>
         <!-- NOTE! this should match spring security version in oskari -->
+        <spring-security.version>6.5.3</spring-security.version>
         <terrain.profile.version>1.1</terrain.profile.version>
         <java.version>17</java.version>
     </properties>
@@ -22,6 +23,11 @@
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>15.0</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.5.19</version>
         </dependency>
     </dependencies>
     <dependencyManagement>
@@ -33,7 +39,21 @@
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
-
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-bom</artifactId>
+                <version>${spring-security.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-dependencies -->
+            <!--dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>3.5.6</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency-->
         </dependencies>
     </dependencyManagement>
 

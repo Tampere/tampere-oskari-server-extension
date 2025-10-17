@@ -64,7 +64,7 @@ public class TreIntraDbloginFilterConfiguration extends OskariDatabaseSecurityCo
 
     }
 
-    private static final Filter treIpFilter = new OncePerRequestFilter() {
+    private final Filter treIpFilter = new OncePerRequestFilter() {
 
         @Override
         protected void doFilterInternal(HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain filterChain) throws ServletException, IOException {
