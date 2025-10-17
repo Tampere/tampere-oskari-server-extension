@@ -7,7 +7,7 @@
   ],
   "dependencies": {
     "oskari-frontend": "git+https://git@github.com/oskariorg/oskari-frontend.git#3.1.0",
-    "oskari-frontend-contrib": "git+https://git@github.com/oskariorg/oskari-frontend-contrib.git#3.1.0"
+    "oskari-frontend-contrib": "git+https://git@github.com/tuomari/oskari-frontend-contrib.git#3.1.0-trefix1"
   },
   "scripts": {
     "dev-mode": "node ./node_modules/oskari-frontend/scripts/oskari-dev-mode",
