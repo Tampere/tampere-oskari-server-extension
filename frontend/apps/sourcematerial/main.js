@@ -1,6 +1,6 @@
 import 'oskari-loader!../../bundles/lang-overrides/bundle.js';
 
-import 'oskari-loader!oskari-frontend/packages/framework/bundle/mapfull/bundle.js';
+import 'oskari-bundle!oskari-frontend/bundles/framework/mapfull';
 import 'oskari-loader!oskari-frontend/packages/framework/bundle/oskariui/bundle.js';
 import 'oskari-loader!oskari-frontend/packages/framework/bundle/ui-components/bundle.js';
 import 'oskari-loader!oskari-frontend/packages/framework/bundle/divmanazer/bundle.js';
