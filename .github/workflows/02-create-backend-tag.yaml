@@ -35,7 +35,9 @@ jobs:
 
       - name: Prepare release
         working-directory: backend
-        run:  mvn --no-transfer-progress --batch-mode release:prepare
+        run:  mvn --no-transfer-progress --batch-mode release:prepare -Dproject.scm.developerConnection=scm:git:https://github.com/${{github.repository}}.git \
+
+
 
       - name: Execute release
         working-directory: backend

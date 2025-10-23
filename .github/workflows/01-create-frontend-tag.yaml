@@ -25,5 +25,5 @@ jobs:
           git add package.json 
           git commit -m "Bump frontend version to ${{env.FRONTEND_VERSION}}"
           git tag frontend-${{env.FRONTEND_VERSION}}
-          git push frontend-${{env.FRONTEND_VERSION}}
-          git push
+          git push origin frontend-${{env.FRONTEND_VERSION}}
+          git push origin
