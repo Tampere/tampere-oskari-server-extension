@@ -51,6 +51,8 @@ jobs:
         run: mvn --no-transfer-progress --batch-mode release:perform -Darguments="-Dmaven.deploy.skip=true" -Dusername=${{env.GIT_USER}}
 
       - name: Trigger creation of server tag
-        run: gh workflow run "02.1 - Build backend image" -f tag=tampere-parent-${{env.SERVER_VERSION}}
+        run: | 
+          gh workflow run "02.1 - Build production backend image" -f tag=tampere-parent-${{env.SERVER_VERSION}}
+          gh workflow run "02.2 - Build oskaritest backend image" -f tag=tampere-parent-${{env.SERVER_VERSION}}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
