@@ -17,6 +17,8 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: 'maven'
+          # Try to always hit cache
+          cache-dependency-path: .gitignore
       - name: "set git user"
         uses: oleksiyrudenko/gha-git-credentials@v2-latest
         with:
