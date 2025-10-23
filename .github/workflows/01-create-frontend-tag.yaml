@@ -1,0 +1,29 @@
+name: "01 Create frontend release"
+on:
+  workflow_dispatch:
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@main
+      - uses: oleksiyrudenko/gha-git-credentials@v2-latest
+        with:
+          token: '${{ secrets.GITHUB_TOKEN }}'
+
+      - name: "bump version"
+        working-directory: ./client
+        run: |
+          npm version patch
+          echo "FRONTEND_VERSION=$(npm pkg get version | sed 's/\"//g')" >> "$GITHUB_ENV"
+      - name: "Deploy version bump"
+        working-directory: ./client/
+        run: |
+          git add package.json 
+          git commit -m "Bump frontend version to ${{env.FRONTEND_VERSION}}"
+          git tag frontend-${{env.FRONTEND_VERSION}}
+          git push frontend-${{env.FRONTEND_VERSION}}
+          git push

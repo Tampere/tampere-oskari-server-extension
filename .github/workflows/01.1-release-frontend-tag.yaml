@@ -1,4 +1,4 @@
-name: Build and release frontend package
+name: 01.1 - Build frontend tag
 
 on:
   push:
@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  build-dist-packages:
+  build-and-release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -60,3 +60,8 @@ jobs:
           files: |
             oskari-frontend-${{ github.ref_name }}-prod.tar.gz
             oskari-frontend-${{ github.ref_name }}-test.tar.gz
+
+      - name: Trigger creation of server tag
+        run: gh workflow run "02 - Build backend image"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

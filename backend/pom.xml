@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>fi.tampere.oskari</groupId>
     <artifactId>tampere-parent</artifactId>
-    <version>1.13.0-SNAPSHOT</version>
+    <version>3.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>Tampere applications</name>
+    <name>Tampere Oskari</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -4,7 +4,7 @@
     <parent>
         <groupId>fi.tampere.oskari</groupId>
         <artifactId>tampere-parent</artifactId>
-        <version>1.13.0-SNAPSHOT</version>
+        <version>3.1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>server-extension</artifactId>

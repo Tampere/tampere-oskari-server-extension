@@ -1,13 +1,11 @@
 
-name: Deploy backend container to GHCR
+name: 02 - Build backend image
 
 on:
-  push:
-    tags:
-      - "backend-*"
+  workflow_dispatch:
 
 jobs:
-  push-store-image:
+  create-backend-tag:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -17,26 +15,31 @@ jobs:
       actions: write
 
     steps:
-      - name: 'Extract semantic version'
-        run: echo "BACKEND_VERSION=$(echo "${{ github.ref_name }}" | sed -E 's/[^0-9]*(.*)$/\1/')" >> "$GITHUB_ENV"
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@main
-
-      - name: Trigger action to cache maven packages
-        run: gh workflow run "Cache maven packages on master" -f "tag_name=${{ github.ref_name }}"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Trigger action to build prod maven packages
-        run: gh workflow run "Cache maven packages on master" -f "tag_name=${{ github.ref_name }}"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
           cache: 'maven'
+
+
+      - name: Extract release version
+        working-directory: server
+        run: |
+          export BACKEND_VERSION="$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout |  sed 's/^\(.*\)-SNAPSHOT/\1/')";
+          echo "BACKEND_VERSION=${BACKEND_VERSION}" >> $GITHUB_ENV
+          echo "Releasing version: ${BACKEND_VERSION}"
+
+      - name: Prepare release
+        working-directory: backend
+        run:  mvn --no-transfer-progress --batch-mode release:prepare
+
+      - name: Execute release
+        working-directory: backend
+        run: mvn --no-transfer-progress --batch-mode release:perform -Darguments="-Dmaven.deploy.skip=true" -Dusername=${{env.GIT_USER}}
+
+
       # Github packages requires a mandatory login, but becouse the dependency
       # packages are public, we can use GITHUB_TOKEN from this action
       - uses: s4u/maven-settings-action@v3.1.0
@@ -47,10 +50,6 @@ jobs:
                 "username": "ignored",
                 "password": "${{ secrets.GITHUB_TOKEN }}"
             }]
-
-      - name: Force version
-        working-directory: ./backend
-        run: mvn --no-transfer-progress --batch-mode versions:set -DnewVersion=${{env.BACKEND_VERSION}}
 
       - uses: robinraju/release-downloader@v1
         with:
@@ -126,7 +125,6 @@ jobs:
       - name: build package
         working-directory: ./backend
         run: mvn --batch-mode package
-
 
       - name: 'Extract metadata (tags, labels) for production'
         id: meta
