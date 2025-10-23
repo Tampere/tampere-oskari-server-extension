@@ -108,7 +108,7 @@ jobs:
             ${{env.BACKEND_VERSION }}
 
       - name: 'Build and push production Docker image'
-        id: push
+        id: push-prod
         uses: docker/build-push-action@v6
         with:
           context: backend
@@ -134,7 +134,7 @@ jobs:
         run: mvn --batch-mode package
 
       - name: 'Build and push oskaritest Docker image'
-        id: push
+        id: push-test
         uses: docker/build-push-action@v6
         with:
           context: backend
