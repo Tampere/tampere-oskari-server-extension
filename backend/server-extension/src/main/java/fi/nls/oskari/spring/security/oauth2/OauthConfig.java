@@ -59,6 +59,7 @@ public class OauthConfig {
                 .scope("openid", "profile", "email", "User.Read")
                 .clientId(entraIdAppid)
                 .clientSecret(entraIdClientSecret)
+                .clientName("tampere")
                 .build();
     }
 

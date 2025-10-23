@@ -50,7 +50,7 @@ public class TreIntraDbloginFilterConfiguration extends OskariDatabaseSecurityCo
                                               OskariAuthenticationProvider oskariAuthenticationProvider,
                                               OskariAuthenticationSuccessHandler oskariAuthenticationSuccessHandler) {
         super(env, oskariAuthenticationProvider, oskariAuthenticationSuccessHandler);
-      this.envHelper = env;
+        this.envHelper = env;
         this.ipLoginWhitelist = Arrays.stream(PropertyUtil.get("login.ip.whitelist", "").trim().split(",")).map(IpAddressMatcher::new).collect(Collectors.toList());
     }
 

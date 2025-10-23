@@ -1,17 +1,17 @@
 FROM docker.io/library/jetty:9.4-jre17-alpine
 
-COPY webapp-map/target/oskari-map.war webapps/
-COPY webapp-map/target/oskari-map/WEB-INF/lib/postgresql-*.jar lib/ext/
+COPY webapp-map/target/oskari-map/WEB-INF/lib/postgresql-*.jar lib/
+COPY ./docker/log4j2.xml lib/
 
-COPY ./docker/oskari-map.xml webapps/
-COPY ./docker/oskari.ini start.d/
-COPY ./docker/jetty-oskari.xml etc/
-# Trust X-Forwarded headers
-COPY docker/forwarded-customizer.ini start.d/
-COPY docker/forwarded-customizer.xml etc/
+# COPY ./docker/oskari-ext.properties resources/
 
-COPY ./docker/oskari-ext.properties resources/
-COPY ./docker/log4j2.xml resources/
+ARG OSKARI_CONTEXT="oskari"
+ARG FRONTEND_VERSION
+RUN test -n "$FRONTEND_VERSION"
 
-# context path in oskari-map.xml
-ENV OSKARI_CONTEXT_PATH="/"
+COPY webapp-map/target/oskari-map.war webapps/${OSKARI_CONTEXT}.war
+
+# Oskari configurations we can apply at build time ( path, etc )
+ENV OSKARI_OSKARI_AJAX_URL_PREFIX="/${OSKARI_CONTEXT}/action?"
+ENV OSKARI_OSKARI_CLIENT_VERSION="dist/${FRONTEND_VERSION}"
+ENV OSKARI_OSKARI_CLIENT_DOMAIN="http://localhost:8080/${OSKARI_CONTEXT}"

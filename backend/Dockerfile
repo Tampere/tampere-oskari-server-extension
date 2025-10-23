@@ -31,17 +31,25 @@ RUN mvn --no-transfer-progress package
 
 FROM docker.io/library/tomcat:10-jdk17
 
-COPY --from=buildimage /opt/oskari/webapp-map/target/oskari-map.war webapps/
 COPY --from=buildimage /opt/oskari/webapp-map/target/oskari-map/WEB-INF/lib/postgresql-*.jar lib/
-COPY ./docker/oskari-map.xml webapps/
+
+ARG OSKARI_CONTEXT="oskaritest"
+COPY --from=buildimage /opt/oskari/webapp-map/target/oskari-map.war webapps/${OSKARI_CONTEXT}.war
+
+# Oskari configurations we can apply at build time ( path, etc )
+ENV OSKARI_OSKARI_AJAX_URL_PREFIX="/${OSKARI_CONTEXT}/action?"
+ENV OSKARI_OSKARI_CLIENT_VERSION="dist/3.1.0-tre01"
+ENV OSKARI_OSKARI_CLIENT_DOMAIN="http://localhost:8080/${OSKARI_CONTEXT}"
+
+# COPY ./docker/tomcat-descriptor.xml conf/Catalina/localhost/${OSKARI_CONTEXT}.xml
+#COPY ./docker/tomcat-descriptor.xml webapps/oskari-map.xml
 #COPY ./docker/oskari.ini start.d/
 #COPY ./docker/jetty-oskari.xml etc/
 # Trust X-Forwarded headers
 #COPY docker/forwarded-customizer.ini start.d/
 #COPY docker/forwarded-customizer.xml etc/
+COPY ./docker/log4j2.xml lib/
+#COPY ./docker/oskari-ext.properties lib/
 
-#COPY ./docker/oskari-ext.properties resources/
-COPY ./docker/log4j2.xml resources/
-
-# context path in oskari-map.xml
-ENV OSKARI_CONTEXT_PATH="/"
+# context path in tomcat-descriptor.xml
+#ENV OSKARI_CONTEXT_PATH="$}"

@@ -27,6 +27,11 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Trigger action to build prod maven packages
+        run: gh workflow run "Cache maven packages on master" -f "tag_name=${{ github.ref_name }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - uses: actions/setup-java@v4
         with:
           java-version: '17'
@@ -53,18 +58,6 @@ jobs:
           fileName: 'oskari-frontend-*.tar.gz'
           out-file-path: './backend/'
 
-      - name: "Unzip the frontend to correct location"
-        working-directory: ./backend
-        run: mkdir -p ./webapp-map/src/main/webapp/Oskari/ && tar -xz -C ./webapp-map/src/main/webapp/Oskari/ -f ./oskari-frontend*.tar.gz
-
-      - name: "Set the frontend version to override-file"
-        working-directory: ./backend
-        run: echo "oskari.client.version=dist/$(ls ./webapp-map/src/main/webapp/Oskari/dist )" > ./webapp-map/src/main/resources/oskari-docker.properties && cat ./webapp-map/src/main/resources/oskari-docker.properties
-
-      - name: build package
-        working-directory: ./backend
-        run: mvn --batch-mode package
-
       # Start the build of dockerfile
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -75,7 +68,28 @@ jobs:
           registry: ghcr.io
           username: ${{github.actor}}
           password: ${{secrets.GITHUB_TOKEN}}
-      - name: 'Extract metadata (tags, labels) for Docker'
+
+
+      - name: 'override dockerignore'
+        working-directory: ./backend
+        run: echo -e '*\n!docker/**\n!webapp-map/target/*' > .dockerignore
+
+#########################################
+## Build production
+#########################################
+      - name: "Unzip the frontend to correct location"
+        working-directory: ./backend
+        run: mkdir -p ./webapp-map/src/main/webapp/Oskari/ && tar -xz -C ./webapp-map/src/main/webapp/Oskari/ -f ./oskari-frontend*-prod.tar.gz
+
+      - name: "Extract frontend version"
+        working-directory: ./backend
+        run: echo "FRONTEND_VERSION=$(ls ./webapp-map/src/main/webapp/Oskari/dist)" >> $GITHUB_ENV
+
+      - name: build package
+        working-directory: ./backend
+        run: mvn --batch-mode package
+
+      - name: 'Extract metadata (tags, labels) for production'
         id: meta
         uses: docker/metadata-action@v5
         with:
@@ -84,15 +98,53 @@ jobs:
             latest
             ${{env.BACKEND_VERSION }}
 
-      - name: 'override dockerignore'
-        working-directory: ./backend
-        run: echo -e '*\n!docker/**\n!webapp-map/target/*' > .dockerignore
-
-      - name: 'Build and push Docker image'
+      - name: 'Build and push production Docker image'
         id: push
         uses: docker/build-push-action@v6
         with:
           context: backend
+          build-args:
+            FRONTEND_VERSION=${{env.FRONTEND_VERSION}}
+            OSKARI_CONTEXT=oskari
+          file: ./backend/docker/github.Containerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+####################################
+## Build oskaritest
+## This can be removed when all oskari instances run in '/oskari' path.
+####################################
+      - name: "Unzip the frontend to correct location"
+        working-directory: ./backend
+        run: mkdir -p ./webapp-map/src/main/webapp/Oskari/ && tar -xz -C ./webapp-map/src/main/webapp/Oskari/ -f ./oskari-frontend*-test.tar.gz
+
+      - name: "Extract frontend version"
+        working-directory: ./backend
+        run: echo "FRONTEND_VERSION=$(ls ./webapp-map/src/main/webapp/Oskari/dist)" >> $GITHUB_ENV
+
+      - name: build package
+        working-directory: ./backend
+        run: mvn --batch-mode package
+
+
+      - name: 'Extract metadata (tags, labels) for production'
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            latest-oskaritest
+            ${{env.BACKEND_VERSION }}-oskaritest
+
+      - name: 'Build and push production Docker image'
+        id: push
+        uses: docker/build-push-action@v6
+        with:
+          context: backend
+          build-args:
+            FRONTEND_VERSION=${{env.FRONTEND_VERSION}}
+            OSKARI_CONTEXT=oskaritest
           file: ./backend/docker/github.Containerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
