@@ -70,6 +70,8 @@ jobs:
       - name: "Release zipped images"
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: frontend-${{env.FRONTEND_VERSION}}
+          name: Frontend ${{env.FRONTEND_VERSION}}
           files: |
             oskari-frontend-${{ github.ref_name }}-prod.tar.gz
             oskari-frontend-${{ github.ref_name }}-test.tar.gz
