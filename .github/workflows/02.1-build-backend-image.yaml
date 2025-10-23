@@ -1,4 +1,4 @@
-name: "02 - Build backend image"
+name: "02.1 - Build backend image"
 on:
   push:
     tags:

@@ -1,0 +1,53 @@
+name: "02 - Build backend tag"
+on:
+  workflow_dispatch:
+
+jobs:
+  create-backend-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@main
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+      - name: "set git user"
+        uses: oleksiyrudenko/gha-git-credentials@v2-latest
+        with:
+          token: '${{ secrets.GITHUB_TOKEN }}'
+
+      # Github packages requires a mandatory login, but becouse the dependency
+      # packages are public, we can use GITHUB_TOKEN from this action
+      - uses: s4u/maven-settings-action@v3.1.0
+        with:
+          servers: |
+            [{
+                "id": "ubigu-github-oskari-server",
+                "username": "ignored",
+                "password": "${{ secrets.GITHUB_TOKEN }}"
+            }]
+
+      - name: Extract release version
+        working-directory: server
+        run: |
+          export SERVER_VERSION="$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout |  sed 's/^\(.*\)-SNAPSHOT/\1/')";
+          echo "SERVER_VERSION=${SERVER_VERSION}" >> $GITHUB_ENV
+          echo "Releasing version: ${SERVER_VERSION}"
+
+      - name: Prepare release
+        working-directory: backend
+        run:  mvn --no-transfer-progress --batch-mode release:prepare -Dproject.scm.developerConnection=scm:git:https://github.com/${{github.repository}}.git \
+
+      - name: Execute release
+        working-directory: backend
+        run: mvn --no-transfer-progress --batch-mode release:perform -Darguments="-Dmaven.deploy.skip=true" -Dusername=${{env.GIT_USER}}
+
+      - name: Trigger creation of server tag
+        run: gh workflow run "02.1 - Build backend image" -f tag=backend-${{env.SERVER_VERSION}}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

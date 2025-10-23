@@ -77,6 +77,6 @@ jobs:
             oskari-frontend-${{ github.ref_name }}-test.tar.gz
 
       - name: Trigger creation of server tag
-        run: gh workflow run "02 - Build backend image"
+        run: gh workflow run "02 - Build backend tag"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
