@@ -74,7 +74,7 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
           # Try to always hit cache
-          cache-dependency-path: .gitignore
+          cache-dependency-path: backend/.gitignore
 
       # Github packages requires a mandatory login, but becouse the dependency
       # packages are public, we can use GITHUB_TOKEN from this action
