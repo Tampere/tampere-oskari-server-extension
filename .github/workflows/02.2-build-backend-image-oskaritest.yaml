@@ -63,10 +63,6 @@ jobs:
         working-directory: backend
         run: echo -e '*\n!docker/**\n!webapp-map/target/*' > .dockerignore
 
-      - name: "Extract frontend version"
-        working-directory: backend
-        run: echo "FRONTEND_VERSION=$(ls ./webapp-map/src/main/webapp/Oskari/dist)" >> $GITHUB_ENV
-
 #######################
 ### Build backend image
 #######################
@@ -97,6 +93,10 @@ jobs:
         working-directory: backend
         run: mkdir -p ./webapp-map/src/main/webapp/Oskari/ && tar -xz -C ./webapp-map/src/main/webapp/Oskari/ -f ./oskari-frontend*-test.tar.gz
 
+      - name: "Extract frontend version"
+        working-directory: backend
+        run: echo "FRONTEND_VERSION=$(ls ./webapp-map/src/main/webapp/Oskari/dist)" >> $GITHUB_ENV
+
       - name: build package
         working-directory: backend
         run: mvn --batch-mode package
@@ -115,7 +115,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: backend
-          build-args:
+          build-args: |
             FRONTEND_VERSION=${{env.FRONTEND_VERSION}}
             OSKARI_CONTEXT=oskaritest
           file: ./backend/docker/github.Containerfile
