@@ -133,15 +133,6 @@ jobs:
         working-directory: backend
         run: mvn --batch-mode package
 
-      - name: 'Extract metadata (tags, labels) for oskaritest'
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ghcr.io/${{ github.repository }}
-          tags: |
-            latest-oskaritest
-            ${{env.BACKEND_VERSION }}-oskaritest
-
       - name: 'Build and push oskaritest Docker image'
         id: push
         uses: docker/build-push-action@v6
