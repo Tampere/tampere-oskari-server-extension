@@ -1,9 +1,7 @@
-name: "01.1 - Build frontend tag"
+name: "01 - Release frontend"
 
 on:
-  push:
-    tags:
-      - "frontend-*"
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -14,19 +12,33 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      packages: write
+      packages: read
       attestations: write
       id-token: write
+      actions: write
+
     steps:
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@main
-      - name: 'Define frontend version'
-        run: echo "FRONTEND_VERSION=$(echo "${{ github.ref_name }}" | sed -E 's/[^0-9]*(.*)$/\1/')" >> "$GITHUB_ENV"
-      - name: 'Force tag to package version'
+### Create tag for frontend
+      - uses: oleksiyrudenko/gha-git-credentials@v2-latest
+        with:
+          token: '${{ secrets.GITHUB_TOKEN }}'
+      - name: "bump version"
         working-directory: frontend
-        run: npm version $${{ env.FRONTEND_VERSION }}|| echo "Version already correct"
+        run: |
+          npm version patch
+          echo "FRONTEND_VERSION=$(npm pkg get version | sed 's/\"//g')" >> "$GITHUB_ENV"
+      - name: "Deploy version bump"
+        working-directory: frontend
+        run: |
+          git add package.json 
+          git commit -m "Bump frontend version to ${{env.FRONTEND_VERSION}}"
+          git tag frontend-${{env.FRONTEND_VERSION}}
+          git push origin frontend-${{env.FRONTEND_VERSION}}
+          git push origin
 
-
+### Build docker image
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
