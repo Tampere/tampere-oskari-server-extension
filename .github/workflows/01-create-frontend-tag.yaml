@@ -6,7 +6,7 @@ jobs:
   create-release:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: read
     steps:
       - uses: actions/checkout@main

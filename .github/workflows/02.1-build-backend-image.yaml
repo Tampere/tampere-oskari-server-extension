@@ -1,0 +1,95 @@
+name: "02.1 - Build production backend image"
+on:
+  push:
+    tags:
+      - tampere-parent*
+jobs:
+  create-backend-prod-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+      attestations: write
+      id-token: write
+
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@main
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: 'Extract semantic version'
+        run: | 
+          export BACKEND_VERSION="$(echo "${{ github.ref_name }}" | sed -E 's/[^0-9]*(.*)$/\1/')"
+          echo "BACKEND_VERSION=${BACKEND_VERSION}" >> $GITHUB_ENV
+          echo "Releasing version: ${BACKEND_VERSION}"
+
+      # Github packages requires a mandatory login, but becouse the dependency
+      # packages are public, we can use GITHUB_TOKEN from this action
+      - uses: s4u/maven-settings-action@v3.1.0
+        with:
+          servers: |
+            [{
+                "id": "ubigu-github-oskari-server",
+                "username": "ignored",
+                "password": "${{ secrets.GITHUB_TOKEN }}"
+            }]
+
+      - uses: robinraju/release-downloader@v1
+        with:
+          latest: true
+          fileName: 'oskari-frontend-*.tar.gz'
+          out-file-path: './backend/'
+
+      # Start the build of dockerfile
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 'Login to GitHub Container Registry'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
+
+
+      - name: 'override dockerignore'
+        working-directory: ./backend
+        run: echo -e '*\n!docker/**\n!webapp-map/target/*' > .dockerignore
+
+      - name: "Unzip the frontend to correct location"
+        working-directory: ./backend
+        run: mkdir -p ./webapp-map/src/main/webapp/Oskari/ && tar -xz -C ./webapp-map/src/main/webapp/Oskari/ -f ./oskari-frontend*-test.tar.gz
+
+      - name: "Extract frontend version"
+        working-directory: ./backend
+        run: echo "FRONTEND_VERSION=$(ls ./webapp-map/src/main/webapp/Oskari/dist)" >> $GITHUB_ENV
+
+      - name: build package
+        working-directory: ./backend
+        run: mvn --batch-mode package
+
+      - name: 'Extract metadata (tags, labels) for production'
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            latest-oskaritest
+            ${{env.BACKEND_VERSION }}-oskaritest
+
+      - name: 'Build and push production Docker image'
+        id: push
+        uses: docker/build-push-action@v6
+        with:
+          context: backend
+          build-args:
+            FRONTEND_VERSION=${{env.FRONTEND_VERSION}}
+            OSKARI_CONTEXT=oskaritest
+          file: ./backend/docker/github.Containerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

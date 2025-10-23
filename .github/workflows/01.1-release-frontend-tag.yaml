@@ -1,4 +1,4 @@
-name: 01.1 - Build frontend tag
+name: "01.1 - Build frontend tag"
 
 on:
   push:
@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  packages: write
 
 jobs:
   build-and-release:

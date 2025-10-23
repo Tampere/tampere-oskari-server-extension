@@ -1,18 +1,15 @@
-
-name: 02 - Build backend image
-
+name: "02.2 - Build oskaritest backend image"
 on:
-  workflow_dispatch:
-
+  push:
+    tags:
+      - tampere-parent*
 jobs:
-  create-backend-tag:
+  create-backend-oskaritest-release:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
       attestations: write
-      id-token: write
-      actions: write
 
     steps:
       - name: 'Checkout GitHub Action'
@@ -23,22 +20,11 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-
-      - name: Extract release version
-        working-directory: server
-        run: |
-          export BACKEND_VERSION="$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout |  sed 's/^\(.*\)-SNAPSHOT/\1/')";
+      - name: 'Extract semantic version'
+        run: | 
+          export BACKEND_VERSION="$(echo "${{ github.ref_name }}" | sed -E 's/[^0-9]*(.*)$/\1/')"
           echo "BACKEND_VERSION=${BACKEND_VERSION}" >> $GITHUB_ENV
           echo "Releasing version: ${BACKEND_VERSION}"
-
-      - name: Prepare release
-        working-directory: backend
-        run:  mvn --no-transfer-progress --batch-mode release:prepare
-
-      - name: Execute release
-        working-directory: backend
-        run: mvn --no-transfer-progress --batch-mode release:perform -Darguments="-Dmaven.deploy.skip=true" -Dusername=${{env.GIT_USER}}
-
 
       # Github packages requires a mandatory login, but becouse the dependency
       # packages are public, we can use GITHUB_TOKEN from this action
@@ -73,47 +59,6 @@ jobs:
         working-directory: ./backend
         run: echo -e '*\n!docker/**\n!webapp-map/target/*' > .dockerignore
 
-#########################################
-## Build production
-#########################################
-      - name: "Unzip the frontend to correct location"
-        working-directory: ./backend
-        run: mkdir -p ./webapp-map/src/main/webapp/Oskari/ && tar -xz -C ./webapp-map/src/main/webapp/Oskari/ -f ./oskari-frontend*-prod.tar.gz
-
-      - name: "Extract frontend version"
-        working-directory: ./backend
-        run: echo "FRONTEND_VERSION=$(ls ./webapp-map/src/main/webapp/Oskari/dist)" >> $GITHUB_ENV
-
-      - name: build package
-        working-directory: ./backend
-        run: mvn --batch-mode package
-
-      - name: 'Extract metadata (tags, labels) for production'
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ghcr.io/${{ github.repository }}
-          tags: |
-            latest
-            ${{env.BACKEND_VERSION }}
-
-      - name: 'Build and push production Docker image'
-        id: push
-        uses: docker/build-push-action@v6
-        with:
-          context: backend
-          build-args:
-            FRONTEND_VERSION=${{env.FRONTEND_VERSION}}
-            OSKARI_CONTEXT=oskari
-          file: ./backend/docker/github.Containerfile
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-
-####################################
-## Build oskaritest
-## This can be removed when all oskari instances run in '/oskari' path.
-####################################
       - name: "Unzip the frontend to correct location"
         working-directory: ./backend
         run: mkdir -p ./webapp-map/src/main/webapp/Oskari/ && tar -xz -C ./webapp-map/src/main/webapp/Oskari/ -f ./oskari-frontend*-test.tar.gz
