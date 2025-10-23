@@ -57,19 +57,19 @@ jobs:
 
 
       - name: 'override dockerignore'
-        working-directory: ./backend
+        working-directory: backend
         run: echo -e '*\n!docker/**\n!webapp-map/target/*' > .dockerignore
 
       - name: "Unzip the frontend to correct location"
-        working-directory: ./backend
+        working-directory: backend
         run: mkdir -p ./webapp-map/src/main/webapp/Oskari/ && tar -xz -C ./webapp-map/src/main/webapp/Oskari/ -f ./oskari-frontend*-test.tar.gz
 
       - name: "Extract frontend version"
-        working-directory: ./backend
+        working-directory: backend
         run: echo "FRONTEND_VERSION=$(ls ./webapp-map/src/main/webapp/Oskari/dist)" >> $GITHUB_ENV
 
       - name: build package
-        working-directory: ./backend
+        working-directory: backend
         run: mvn --batch-mode package
 
       - name: 'Extract metadata (tags, labels) for production'

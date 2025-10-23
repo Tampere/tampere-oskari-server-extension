@@ -15,12 +15,12 @@ jobs:
           token: '${{ secrets.GITHUB_TOKEN }}'
 
       - name: "bump version"
-        working-directory: ./client
+        working-directory: frontend
         run: |
           npm version patch
           echo "FRONTEND_VERSION=$(npm pkg get version | sed 's/\"//g')" >> "$GITHUB_ENV"
       - name: "Deploy version bump"
-        working-directory: ./client/
+        working-directory: frontend
         run: |
           git add package.json 
           git commit -m "Bump frontend version to ${{env.FRONTEND_VERSION}}"

@@ -23,7 +23,7 @@ jobs:
       - name: 'Define frontend version'
         run: echo "FRONTEND_VERSION=$(echo "${{ github.ref_name }}" | sed -E 's/[^0-9]*(.*)$/\1/')" >> "$GITHUB_ENV"
       - name: 'Force tag to package version'
-        working-directory: ./frontend/
+        working-directory: frontend
         run: npm version $${{ env.FRONTEND_VERSION }}|| echo "Version already correct"
 
 
@@ -36,21 +36,21 @@ jobs:
 
       # Create a gzip file containing the built frontend
       - name: 'Build production Inventory Image'
-        working-directory: ./frontend/
+        working-directory: frontend
         run: |
           docker build . --target buildimage --tag  ${{ steps.meta.outputs.tags }}-prod --build-arg BUILD_TARGET=build
       - name: 'Build test Inventory Image'
-        working-directory: ./frontend/
+        working-directory: frontend
         run: |
           docker build . --target buildimage --tag  ${{ steps.meta.outputs.tags }}-test --build-arg BUILD_TARGET=build:test
       - name: 'Extract production gzip'
-        working-directory: ./frontend/
+        working-directory: frontend
         run: |
           id=$(docker create  ${{ steps.meta.outputs.tags }}-prod)
           docker cp $id:/opt/oskari/dist - | gzip > ../oskari-frontend-${{ github.ref_name }}-prod.tar.gz
           docker rm -v $id
       - name: 'Extract test gzip'
-        working-directory: ./frontend/
+        working-directory: frontend
         run: |
           id=$(docker create ${{ steps.meta.outputs.tags }}-test)
           docker cp $id:/opt/oskari/dist - | gzip > ../oskari-frontend-${{ github.ref_name }}-test.tar.gz
