@@ -33,7 +33,7 @@ jobs:
             }]
 
       - name: Extract release version
-        working-directory: server
+        working-directory: backend
         run: |
           export SERVER_VERSION="$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout |  sed 's/^\(.*\)-SNAPSHOT/\1/')";
           echo "SERVER_VERSION=${SERVER_VERSION}" >> $GITHUB_ENV
