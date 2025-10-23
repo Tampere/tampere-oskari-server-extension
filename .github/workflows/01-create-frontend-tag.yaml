@@ -8,6 +8,7 @@ jobs:
     permissions:
       contents: write
       packages: read
+      actions: write
     steps:
       - uses: actions/checkout@main
       - uses: oleksiyrudenko/gha-git-credentials@v2-latest
