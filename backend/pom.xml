@@ -110,7 +110,10 @@
             </plugin>
         </plugins>
     </build>
-
+    <scm>
+        <connection>scm:git:https://github.com/Tampere/tampere-oskari-server-extension.git</connection>
+        <developerConnection>scm:git:https://github.com/Tampere/tampere-oskari-server-extension.git</developerConnection>
+    </scm>
     <modules>
         <module>server-extension</module>
         <module>tampere-resources</module>
