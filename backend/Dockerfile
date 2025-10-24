@@ -39,7 +39,7 @@ COPY --from=buildimage /opt/oskari/webapp-map/target/oskari-map.war webapps/${OS
 # Oskari configurations we can apply at build time ( path, etc )
 ENV OSKARI_OSKARI_AJAX_URL_PREFIX="/${OSKARI_CONTEXT}/action?"
 ENV OSKARI_OSKARI_CLIENT_VERSION="dist/3.1.0-tre01"
-ENV OSKARI_OSKARI_CLIENT_DOMAIN="http://localhost:8080/${OSKARI_CONTEXT}"
+ENV OSKARI_OSKARI_CLIENT_DOMAIN="/${OSKARI_CONTEXT}"
 
 # COPY ./docker/tomcat-descriptor.xml conf/Catalina/localhost/${OSKARI_CONTEXT}.xml
 #COPY ./docker/tomcat-descriptor.xml webapps/oskari-map.xml

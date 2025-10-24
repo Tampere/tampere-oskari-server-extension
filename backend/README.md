@@ -3,6 +3,18 @@
 Oskari is deployed as containers in Tampere environment. Image is generated in
 GitHub actions. To update Oskari-core version, use the following instructions.
 
+## Properties
+Some properties are set to sensible defaults in the oskari-ext.properties file.
+Some are generated at the container build time, depending on the building targets
+and the following properties should be configured in the environment:
+
+| Property             | Description                | Example                                   |
+|----------------------|----------------------------|-------------------------------------------|
+| `OSKARI_DB_USERNAME` | Database username          | `oskari`                                  |
+| `OSKARI_DB_PASSWORD` | Database password          | `pwd1234`                                 |
+| `OSKARI_DB_URL`      | Database connection string | `jdbc:postgresql://127.0.0.1:5432/dbname` |
+
+
 ## Updating Oskari version in container image
 
 1. Modify pom.xml in project root, and change property to match the wanted oskari version.
