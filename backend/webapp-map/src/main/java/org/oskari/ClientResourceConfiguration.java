@@ -4,6 +4,8 @@ import fi.nls.oskari.util.PropertyUtil;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.resource.EncodedResourceResolver;
+import org.springframework.web.servlet.resource.PathResourceResolver;
 
 @Configuration
 public class ClientResourceConfiguration implements WebMvcConfigurer {
@@ -19,6 +21,10 @@ public class ClientResourceConfiguration implements WebMvcConfigurer {
         registry.addResourceHandler("/Oskari/**")
                 .addResourceLocations("/Oskari/")
                 .setCachePeriod(60*60*8) // Cache static files for 8 hours
-        ;
+                .resourceChain(true) // cache resource lookups
+                // Gzip and cache static resources for faster delivery times.
+                .addResolver(new EncodedResourceResolver())
+                .addResolver(new PathResourceResolver());
+
     }
 }
