@@ -3,16 +3,15 @@ package org.oskari;
 import fi.nls.oskari.control.ActionParameters;
 import fi.nls.oskari.log.LogFactory;
 import fi.nls.oskari.log.Logger;
+import fi.nls.oskari.spring.security.TreIntraDbloginFilterConfiguration;
+import fi.nls.oskari.util.PropertyUtil;
 import jakarta.annotation.Nullable;
 import org.oskari.spring.SpringEnvHelper;
 import org.oskari.spring.extension.OskariParam;
-import fi.nls.oskari.spring.security.TreIntraDbloginFilterConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.util.Collection;
 
 @Controller
 public class LoginViewHandler {
@@ -21,18 +20,23 @@ public class LoginViewHandler {
 
     @Nullable
     private final TreIntraDbloginFilterConfiguration config;
+    private final static String PROPERTY_CLIENT_DOMAIN = "oskari.client.domain";
 
     private final SpringEnvHelper env;
+    private final String clientDomain;
 
     @Autowired
     public LoginViewHandler(@Nullable TreIntraDbloginFilterConfiguration treLoginConfig , SpringEnvHelper env) {
         this.env = env;
         this.config = treLoginConfig;
+        clientDomain = PropertyUtil.get(PROPERTY_CLIENT_DOMAIN, "");
+
     }
 
     @RequestMapping("/tre-login")
     public String treLogin(Model model, @OskariParam ActionParameters params) throws Exception {
         model.addAttribute("_src_ip", params.getRequest().getRemoteAddr());
+        model.addAttribute("clientDomain", clientDomain);
 
         if (config == null || !params.getUser().isGuest()) {
             log.info("User already logged in or login is not enabled. ");

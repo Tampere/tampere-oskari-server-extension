@@ -6,6 +6,7 @@
     <meta name="description" content="Tampereen avoimien aineistojen latauspalvelu" />
     <link rel="shortcut icon" href="${clientDomain}/Oskari${path}/logo.png" type="image/png" />
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <link rel="icon" type="image/x-icon" href="${clientDomain}/Oskari/favicon.ico">
 
     <!-- ############# css ################# -->
     <link
