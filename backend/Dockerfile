@@ -26,7 +26,7 @@ RUN mkdir -p ./webapp-map/src/main/webapp/Oskari/ \
     # add the frontend to oskari-override, which is loaded in webapp-map/src/main/java/org.oskari/ClientResourceConfiguration
 RUN echo "oskari.client.version=dist/$(ls ./webapp-map/src/main/webapp/Oskari/dist )" > /opt/oskari/webapp-map/src/main/resources/oskari-override.properties
 
-
+RUN find ./webapp-map/src/main/webapp/Oskari/dist -type f \( -name '*.css' -o -name '*.js' -o -name "*.svg" -o -name "*.json" -o -name "*.map" \) -print0 -exec gzip -k9 {} \;
 RUN mvn --no-transfer-progress package
 
 FROM docker.io/library/tomcat:10-jdk17

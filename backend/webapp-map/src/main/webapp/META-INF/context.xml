@@ -17,6 +17,6 @@
     />
     <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
            prefix="localhost_access_log" suffix=".txt" requestAttributesEnabled="true"
-           pattern="%a %l %u %t &quot;%r&quot; %s %B %D &quot;%{Referer}i&quot; &quot;%{User-Agent}i&quot; &quot;%{X-Forwarded-For}i&quot;"/>
+           pattern="%a %l %u %t &quot;%r&quot; %s %B %D &quot;%{Referer}i&quot; &quot;%{User-Agent}i&quot;"/>
 
 </Context>

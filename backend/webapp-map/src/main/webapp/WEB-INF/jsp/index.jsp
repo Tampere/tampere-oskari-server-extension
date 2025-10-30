@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="format-detection" content="telephone=no" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link rel="icon" type="image/x-icon" href="${clientDomain}/Oskari/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="${clientDomain}/Oskari/vaakuna.svg">
 
 
     <title>Oskari - ${viewName}</title>

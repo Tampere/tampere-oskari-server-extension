@@ -75,7 +75,10 @@ jobs:
       ###################################
       - name: "Unzip the frontend to correct location"
         working-directory: backend
-        run: mkdir -p ./webapp-map/src/main/webapp/Oskari/ && tar -xz -C ./webapp-map/src/main/webapp/Oskari/ -f ./oskari-frontend*-test.tar.gz
+        run: | 
+          mkdir -p ./webapp-map/src/main/webapp/Oskari/ && tar -xz -C ./webapp-map/src/main/webapp/Oskari/ -f ./oskari-frontend*-test.tar.gz
+          find ./webapp-map/src/main/webapp/Oskari/ -type f \( -name '*.css' -o -name '*.js' -o -name "*.svg" -o -name "*.json" -o -name "*.map" \) -print0 -exec gzip -k9 {} \;
+
 
       - name: "Extract frontend version"
         working-directory: backend
