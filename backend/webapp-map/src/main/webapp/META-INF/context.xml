@@ -13,7 +13,7 @@
     <!-- Disable session persistence across restarts -->
     <!--Manager pathname="" /-->
     <Valve className="org.apache.catalina.valves.RemoteIpValve"
-           trustedProxies="193\.111\.93\.\d{1,3}"
+           trustedProxies="193\.111\.93\.\d{1,3},10\.\d{1,3}\.\d{1,3}\.\d{1,3}"
     />
     <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
            prefix="localhost_access_log" suffix=".txt" requestAttributesEnabled="true"
