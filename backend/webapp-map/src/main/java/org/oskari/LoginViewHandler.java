@@ -9,9 +9,13 @@ import jakarta.annotation.Nullable;
 import org.oskari.spring.SpringEnvHelper;
 import org.oskari.spring.extension.OskariParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import static org.oskari.spring.SpringEnvHelper.PROFILE_LOGIN_DB;
 
 @Controller
 public class LoginViewHandler {
@@ -24,10 +28,15 @@ public class LoginViewHandler {
 
     private final SpringEnvHelper env;
     private final String clientDomain;
+    private final Environment springEnvironment;
 
     @Autowired
-    public LoginViewHandler(@Nullable TreIntraDbloginFilterConfiguration treLoginConfig , SpringEnvHelper env) {
+    public LoginViewHandler(
+            @Nullable TreIntraDbloginFilterConfiguration treLoginConfig,
+            SpringEnvHelper env,
+            Environment springEnvironment) {
         this.env = env;
+        this.springEnvironment = springEnvironment;
         this.config = treLoginConfig;
         clientDomain = PropertyUtil.get(PROPERTY_CLIENT_DOMAIN, "");
 
@@ -45,12 +54,12 @@ public class LoginViewHandler {
             return "tre-login";
         }
         if (!config.isAllowedIp(params.getRequest())) {
-            log.info("IP not allowed to login: " + params.getRequest().getRemoteAddr() );
+            log.info("IP not allowed to login: {}", params.getRequest().getRemoteAddr());
             params.getResponse().sendRedirect(params.getRequest().getContextPath() + "?loginState=failed");
             return "tre-login";
         }
 
-        if (env.isDBLoginEnabled()) {
+        if (springEnvironment.acceptsProfiles(Profiles.of("TreLoginWhitelistConfig", PROFILE_LOGIN_DB))) {
             model.addAttribute("_login_uri", env.getLoginUrl());
             model.addAttribute("_login_field_user", env.getParam_username());
             model.addAttribute("_login_field_pass", env.getParam_password());

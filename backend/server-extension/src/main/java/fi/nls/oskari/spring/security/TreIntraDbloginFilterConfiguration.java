@@ -73,8 +73,10 @@ public class TreIntraDbloginFilterConfiguration {
         http.authenticationProvider(oskariAuthenticationProvider);
 
         http
-                .securityMatcher(envHelper.getLoginUrl())
-                .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
+                .securityMatcher(envHelper.getLoginUrl(), "/basicauth")
+                .authorizeHttpRequests(authorize ->
+                        authorize.requestMatchers("/basicauth").authenticated()
+                                .anyRequest().permitAll())
                 .formLogin(form -> form
                         .loginProcessingUrl(envHelper.getLoginUrl())
                         .passwordParameter(envHelper.getParam_password())

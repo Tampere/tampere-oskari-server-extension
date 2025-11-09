@@ -30,8 +30,7 @@ public class TampereOauth2Configuration {
 
     @Autowired
     public TampereOauth2Configuration(SpringEnvHelper env,
-                                      OskariOauth2SuccessHandler successHandler)
-    {
+                                      OskariOauth2SuccessHandler successHandler) {
         this.env = env;
         this.successHandler = successHandler;
     }
@@ -52,7 +51,7 @@ public class TampereOauth2Configuration {
                         // the user can access any url without logging in (guests can see geoportal)
                         // but we want to be explicit about it to have the user available on any request
                         authorize -> authorize
-                             //  .requestMatchers("/oauth2/**", "/auth", "/login").authenticated()
+                                .requestMatchers("/oauth2/**", "/auth", "/login").authenticated()
                                 .anyRequest().permitAll()
                 )
                 .oauth2Login(o -> o

@@ -49,5 +49,15 @@ public class Oauth2ApiController {
         return new RedirectView(url);
     }
 
+    @RequestMapping("/basicauth")
+    public RedirectView basicauth(Model model, @OskariParam ActionParameters params) throws Exception {
+        if (params.getResponse().isCommitted()) {
+            // to prevent errors in log -> request has already been handled
+            return null;
+        }
+        String url = PropertyUtil.get("oskari.domain") + PropertyUtil.get("oskari.map.url");
+        return new RedirectView(url);
+    }
+
 
 }
