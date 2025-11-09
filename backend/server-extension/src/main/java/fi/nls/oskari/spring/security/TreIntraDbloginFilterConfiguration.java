@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.oskari.spring.SpringEnvHelper;
 import org.oskari.spring.security.OskariAuthenticationSuccessHandler;
 import org.oskari.spring.security.OskariLoginFailureHandler;
+import org.oskari.spring.security.OskariSpringSecurityDsl;
 import org.oskari.spring.security.database.OskariAuthenticationProvider;
 import org.oskari.spring.security.database.OskariDatabaseSecurityConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,30 +38,53 @@ import java.util.stream.Collectors;
 //@Configuration
 @Configuration
 @EnableWebSecurity
-@Order(1)
-public class TreIntraDbloginFilterConfiguration extends OskariDatabaseSecurityConfig {
+@Order(10)
+public class TreIntraDbloginFilterConfiguration {
 
-    private static final Logger logger = LogFactory.getLogger(TreIntraDbloginFilterConfiguration.class);
+    private static final Logger log = LogFactory.getLogger(TreIntraDbloginFilterConfiguration.class);
     private final List<IpAddressMatcher> ipLoginWhitelist;
     private final SpringEnvHelper envHelper;
+    private final OskariAuthenticationProvider oskariAuthenticationProvider;
+    private final OskariAuthenticationSuccessHandler oskariAuthenticationSuccessHandler;
 
 
     @Autowired
     public TreIntraDbloginFilterConfiguration(SpringEnvHelper env,
                                               OskariAuthenticationProvider oskariAuthenticationProvider,
+
                                               OskariAuthenticationSuccessHandler oskariAuthenticationSuccessHandler) {
-        super(env, oskariAuthenticationProvider, oskariAuthenticationSuccessHandler);
         this.envHelper = env;
-        this.ipLoginWhitelist = Arrays.stream(PropertyUtil.get("login.ip.whitelist", "").trim().split(",")).map(IpAddressMatcher::new).collect(Collectors.toList());
+        this.oskariAuthenticationProvider = oskariAuthenticationProvider;
+        this.oskariAuthenticationSuccessHandler = oskariAuthenticationSuccessHandler;
+        this.ipLoginWhitelist = Arrays.stream(PropertyUtil.get("login.ip.whitelist", "").split(","))
+                .map(String::trim)
+                .filter(t -> !t.isBlank())
+                .map(IpAddressMatcher::new)
+                .collect(Collectors.toList());
     }
 
     @Bean
-    @Order(1)
-    @Override
+    @Order(10)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        logger.warn("Adding Tampere internal network filter to loginurl: " + envHelper.getLoginUrl());
+        log.warn("Adding Tampere internal network filter to loginurl: " + envHelper.getLoginUrl());
         http.addFilterBefore(treIpFilter, UsernamePasswordAuthenticationFilter.class);
-        return super.securityFilterChain(http);
+
+        // Add custom authentication provider
+        http.authenticationProvider(oskariAuthenticationProvider);
+
+        http
+                .securityMatcher(envHelper.getLoginUrl())
+                .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
+                .formLogin(form -> form
+                        .loginProcessingUrl(envHelper.getLoginUrl())
+                        .passwordParameter(envHelper.getParam_password())
+                        .usernameParameter(envHelper.getParam_username())
+                        .failureHandler(new OskariLoginFailureHandler("/?loginState=failed"))
+                        .successHandler(oskariAuthenticationSuccessHandler)
+                        .loginPage("/")
+                );
+
+        return http.build();
 
     }
 

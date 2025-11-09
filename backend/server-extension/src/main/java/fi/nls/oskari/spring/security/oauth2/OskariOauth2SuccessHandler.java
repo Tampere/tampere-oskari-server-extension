@@ -62,10 +62,9 @@ public class OskariOauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response, Authentication authentication) throws IOException, ServletException, ServletException {
         final Object principal = authentication.getPrincipal();
-        if (!(principal instanceof DefaultOidcUser)) {
+        if (!(principal instanceof DefaultOidcUser oidcUser)) {
             throw new IllegalArgumentException("Expected DefaultOidcUser, got: " + principal.getClass().getName());
         }
-        DefaultOidcUser oidcUser = (DefaultOidcUser) principal;
         User user = null;
         try {
             user = getUser(oidcUser);
