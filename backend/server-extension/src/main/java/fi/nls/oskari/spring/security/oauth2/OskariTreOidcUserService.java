@@ -1,0 +1,129 @@
+package fi.nls.oskari.spring.security.oauth2;
+
+import fi.nls.oskari.log.LogFactory;
+import fi.nls.oskari.log.Logger;
+import fi.nls.oskari.service.ServiceException;
+import fi.nls.oskari.service.UserService;
+import fi.nls.oskari.user.DatabaseUserService;
+import fi.nls.oskari.util.PropertyUtil;
+import org.oskari.spring.SpringEnvHelper;
+import org.oskari.spring.security.OskariUserHelper;
+import org.oskari.user.Role;
+import org.oskari.user.User;
+import org.springframework.context.annotation.Profile;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.OAuth2ErrorCodes;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.stereotype.Service;
+
+import java.text.SimpleDateFormat;
+import java.time.OffsetDateTime;
+import java.util.Date;
+import java.util.Objects;
+
+@Service
+@Profile("oauth2")
+public class OskariTreOidcUserService extends OidcUserService {
+    private static final Logger logger = LogFactory.getLogger(OskariTreOidcUserService.class);
+
+    private final DatabaseUserService userService;
+    private final SpringEnvHelper env;
+    private final boolean autoregisterOauthUsers;
+
+    public OskariTreOidcUserService(SpringEnvHelper env) {
+        this.userService = getUserService();
+        this.env = env;
+        this.autoregisterOauthUsers = PropertyUtil.getOptional("oskari.oauth2.autoregister", false);
+    }
+
+    @Override
+    public OidcUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException {
+        OidcUser loadedUser = super.loadUser(userRequest);
+        if (!(loadedUser instanceof DefaultOidcUser oidcUser)) {
+            throw new IllegalArgumentException("Expected DefaultOidcUser, got: " + loadedUser.getClass().getName());
+        }
+
+        try {
+            User user = getUser(oidcUser);
+            if(user == null){
+                throw new OAuth2AuthenticationException(OAuth2ErrorCodes.ACCESS_DENIED);
+            }
+            return new OskariTreOidcUser(oidcUser, user.getScreenname(), OskariUserHelper.getRoles(user.getRoles()));
+
+        } catch (ServiceException e) {
+            logger.warn("Error loading user by email {}", oidcUser, e);
+        }
+        throw new OAuth2AuthenticationException(OAuth2ErrorCodes.SERVER_ERROR);
+
+    }
+
+
+    private User getUser(DefaultOidcUser oidcUser) throws ServiceException {
+        User user = userService.getUserByEmail(oidcUser.getEmail());
+        logger.warn("Loaded user {} from database with email {}", user, oidcUser.getEmail());
+        if (autoregisterOauthUsers && user == null) {
+            user = new User();
+            user.setCreated(OffsetDateTime.now());
+            user.addRole(Role.getDefaultUserRole());
+        }
+        if (user == null || !user.hasRole(Role.getDefaultUserRole().getName())) {
+            return null;
+        }
+
+        // Update user info
+        if (copyInfoToUser(user, oidcUser)) {
+            userService.saveUser(user);
+        }
+
+        return user;
+    }
+
+    protected DatabaseUserService getUserService() {
+        try {
+            // throws class cast exception if configured other than intended
+            return (DatabaseUserService) UserService.getInstance();
+        } catch (ServiceException e) {
+            throw new RuntimeException("Error getting UserService. Is it configured?", e);
+        }
+
+
+    }
+
+    private boolean copyInfoToUser(User user, DefaultOidcUser oidcUser) {
+        boolean modified = false;
+        String email = oidcUser.getEmail().toLowerCase();
+        if (!Objects.equals(user.getEmail(), email)) {
+            user.setEmail(email);
+            modified = true;
+        }
+        // If user has no given and family names set, it is still possible that they
+        // have full name. Fallback to use it as firstname
+        if ((oidcUser.getGivenName() == null || oidcUser.getGivenName().isBlank())
+                && (oidcUser.getFamilyName() == null || oidcUser.getFamilyName().isBlank())
+        ) {
+            if (!Objects.equals(user.getFirstname(), oidcUser.getFullName())) {
+                user.setFirstname(oidcUser.getFullName());
+                modified = true;
+            }
+        } else {
+            if (!Objects.equals(user.getFirstname(), oidcUser.getGivenName())) {
+                user.setFirstname(oidcUser.getGivenName());
+                modified = true;
+            }
+            if (!Objects.equals(user.getLastname(), oidcUser.getFamilyName())) {
+                user.setLastname(oidcUser.getFamilyName());
+                modified = true;
+            }
+        }
+
+        String preferredUsername = oidcUser.getPreferredUsername().toLowerCase();
+        if (preferredUsername.equals(user.getScreenname())) {
+            user.setScreenname(preferredUsername);
+            modified = true;
+        }
+        return modified;
+    }
+}

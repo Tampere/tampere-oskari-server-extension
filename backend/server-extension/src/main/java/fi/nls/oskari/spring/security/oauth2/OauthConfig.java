@@ -5,6 +5,7 @@ import fi.nls.oskari.log.Logger;
 import fi.nls.oskari.util.PropertyUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -20,6 +21,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @Configuration
 @Profile("oauth2")
+@Import({
+        TestRestController.class})
 public class OauthConfig {
     private static final Logger logger = LogFactory.getLogger(OauthConfig.class);
     private final AtomicReference<ClientRegistration> entraid = new AtomicReference<>();

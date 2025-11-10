@@ -25,6 +25,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.util.matcher.IpAddressMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -42,10 +44,10 @@ import java.util.stream.Collectors;
 public class TreIntraDbloginFilterConfiguration {
 
     private static final Logger log = LogFactory.getLogger(TreIntraDbloginFilterConfiguration.class);
-    private final List<IpAddressMatcher> ipLoginWhitelist;
     private final SpringEnvHelper envHelper;
     private final OskariAuthenticationProvider oskariAuthenticationProvider;
     private final OskariAuthenticationSuccessHandler oskariAuthenticationSuccessHandler;
+    private final @NotNull List<IpAddressMatcher> ipLoginWhitelist;
 
 
     @Autowired
@@ -71,9 +73,12 @@ public class TreIntraDbloginFilterConfiguration {
 
         // Add custom authentication provider
         http.authenticationProvider(oskariAuthenticationProvider);
-
+        http.csrf(csrf -> csrf
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
+        );
         http
-                .securityMatcher(envHelper.getLoginUrl(), "/basicauth")
+                .securityMatcher(envHelper.getLoginUrl(), "/basicauth", "/tre-login")
                 .authorizeHttpRequests(authorize ->
                         authorize.requestMatchers("/basicauth").authenticated()
                                 .anyRequest().permitAll())
@@ -83,7 +88,7 @@ public class TreIntraDbloginFilterConfiguration {
                         .usernameParameter(envHelper.getParam_username())
                         .failureHandler(new OskariLoginFailureHandler("/?loginState=failed"))
                         .successHandler(oskariAuthenticationSuccessHandler)
-                        .loginPage("/")
+                        .loginPage("/tre-login")
                 );
 
         return http.build();
@@ -102,9 +107,7 @@ public class TreIntraDbloginFilterConfiguration {
             logger.warn("Logging not allowed for IP: " + request.getRemoteAddr());
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Login forbidden from this network");
         }
-
     };
-
 
     public boolean isAllowedIp(HttpServletRequest request) {
         for (IpAddressMatcher ipAddressMatcher : ipLoginWhitelist) {

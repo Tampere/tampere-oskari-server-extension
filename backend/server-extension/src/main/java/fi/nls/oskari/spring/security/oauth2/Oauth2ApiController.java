@@ -3,8 +3,8 @@ package fi.nls.oskari.spring.security.oauth2;
 import fi.nls.oskari.control.ActionParameters;
 import fi.nls.oskari.log.LogFactory;
 import fi.nls.oskari.log.Logger;
-import org.oskari.spring.extension.OskariParam;
 import fi.nls.oskari.util.PropertyUtil;
+import org.oskari.spring.extension.OskariParam;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -39,6 +39,7 @@ public class Oauth2ApiController {
         String url = PropertyUtil.get("oskari.domain") + PropertyUtil.get("oskari.map.url");
         return new RedirectView(url);
     }
+
     @RequestMapping("/login")
     public RedirectView login(Model model, @OskariParam ActionParameters params) throws Exception {
         if (params.getResponse().isCommitted()) {

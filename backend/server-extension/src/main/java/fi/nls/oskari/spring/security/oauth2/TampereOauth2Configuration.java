@@ -4,10 +4,8 @@ package fi.nls.oskari.spring.security.oauth2;
 import fi.nls.oskari.log.LogFactory;
 import fi.nls.oskari.log.Logger;
 import org.oskari.spring.SpringEnvHelper;
-import org.oskari.spring.security.OskariAuthenticationSuccessHandler;
 import org.oskari.spring.security.OskariLoginFailureHandler;
 import org.oskari.spring.security.OskariSpringSecurityDsl;
-import org.oskari.spring.security.database.OskariAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,14 +23,19 @@ import org.springframework.security.web.SecurityFilterChain;
 public class TampereOauth2Configuration {
     private static final Logger log = LogFactory.getLogger(TampereOauth2Configuration.class);
 
-    private final OskariOauth2SuccessHandler successHandler;
     private final SpringEnvHelper env;
+    private final OskariTreOidcUserService oidcUserService;
+    private final OskariOauth2SuccessHandler successHandler;
 
     @Autowired
-    public TampereOauth2Configuration(SpringEnvHelper env,
-                                      OskariOauth2SuccessHandler successHandler) {
+    public TampereOauth2Configuration(
+            SpringEnvHelper env,
+            OskariOauth2SuccessHandler successHandler,
+            OskariTreOidcUserService oidcUserService
+    ) {
         this.env = env;
         this.successHandler = successHandler;
+        this.oidcUserService = oidcUserService;
     }
 
     @Bean
@@ -41,10 +44,10 @@ public class TampereOauth2Configuration {
         log.info("Configuring Oauth2 login");
         http.with(OskariSpringSecurityDsl.oskariCommonDsl(),
                 (dsl) -> dsl
+
                         .setLogoutUrl(env.getLogoutUrl())
                         .setLogoutSuccessUrl(env.getLoggedOutPage())
         );
-
 
         // Add custom authentication provider
         http.authorizeHttpRequests(
@@ -57,6 +60,7 @@ public class TampereOauth2Configuration {
                 .oauth2Login(o -> o
                                 // .loginProcessingUrl(env.getLoginUrl())
                                 .failureHandler(new OskariLoginFailureHandler("/?loginState=failed"))
+                                .userInfoEndpoint(u -> u.oidcUserService(oidcUserService))
                                 .successHandler(successHandler)
                         //   .loginPage("/")
                 );
