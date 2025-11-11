@@ -54,7 +54,7 @@ jobs:
       - name: 'Build test Inventory Image'
         working-directory: frontend
         run: |
-          docker build . --target buildimage --tag  ${{ steps.meta.outputs.tags }}-test --build-arg BUILD_TARGET=build:test
+          docker build . --target buildimage --tag ${{ steps.meta.outputs.tags }}-test --build-arg BUILD_TARGET=build:test
       - name: 'Extract production gzip'
         working-directory: frontend
         run: |
