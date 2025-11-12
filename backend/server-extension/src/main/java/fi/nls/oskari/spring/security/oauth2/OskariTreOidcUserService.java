@@ -41,11 +41,7 @@ public class OskariTreOidcUserService extends OidcUserService {
 
     @Override
     public OidcUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException {
-        OidcUser loadedUser = super.loadUser(userRequest);
-        if (!(loadedUser instanceof DefaultOidcUser oidcUser)) {
-            throw new IllegalArgumentException("Expected DefaultOidcUser, got: " + loadedUser.getClass().getName());
-        }
-
+        OidcUser oidcUser = super.loadUser(userRequest);
         try {
             User user = getUser(oidcUser);
             if(user == null){
@@ -61,7 +57,7 @@ public class OskariTreOidcUserService extends OidcUserService {
     }
 
 
-    private User getUser(DefaultOidcUser oidcUser) throws ServiceException {
+    private User getUser(OidcUser oidcUser) throws ServiceException {
         User user = userService.getUserByEmail(oidcUser.getEmail());
         logger.warn("Loaded user {} from database with email {}", user, oidcUser.getEmail());
         if (autoregisterOauthUsers && user == null) {
@@ -92,7 +88,7 @@ public class OskariTreOidcUserService extends OidcUserService {
 
     }
 
-    private boolean copyInfoToUser(User user, DefaultOidcUser oidcUser) {
+    private boolean copyInfoToUser(User user, OidcUser oidcUser) {
         boolean modified = false;
         String email = oidcUser.getEmail().toLowerCase();
         if (!Objects.equals(user.getEmail(), email)) {
