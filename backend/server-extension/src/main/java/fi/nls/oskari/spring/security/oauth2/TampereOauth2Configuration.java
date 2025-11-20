@@ -48,7 +48,7 @@ public class TampereOauth2Configuration {
                         .setLogoutUrl(env.getLogoutUrl())
                         .setLogoutSuccessUrl(env.getLoggedOutPage())
         );
-        OskariSpringSecurityDsl.disableUnnecessarySessions(http);
+        OskariSpringSecurityDsl.oskariCommonDsl().init(http);
 
         // Add custom authentication provider
         http.authorizeHttpRequests(

@@ -71,7 +71,7 @@ public class TreIntraDbloginFilterConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         log.warn("Adding Tampere internal network filter to loginurl: " + envHelper.getLoginUrl());
         http.addFilterBefore(treIpFilter, UsernamePasswordAuthenticationFilter.class);
-        OskariSpringSecurityDsl.disableUnnecessarySessions(http);
+        OskariSpringSecurityDsl.oskariCommonDsl().init(http);
 
         // Add custom authentication provider
         http.authenticationProvider(oskariAuthenticationProvider);
