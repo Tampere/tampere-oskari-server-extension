@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -43,13 +44,7 @@ public class TampereOauth2Configuration {
     @Order(100)
     public SecurityFilterChain tampereOauth2SecurityFilterChain(HttpSecurity http) throws Exception {
         log.info("Configuring Oauth2 login");
-        http.with(OskariSpringSecurityDsl.oskariCommonDsl(),
-                (dsl) -> dsl
-                        .setLogoutUrl(env.getLogoutUrl())
-                        .setLogoutSuccessUrl(env.getLoggedOutPage())
-        );
-        OskariSpringSecurityDsl.oskariCommonDsl().init(http);
-
+        http.with(OskariSpringSecurityDsl.oskariCommonDsl(),  dsl -> {});
         // Add custom authentication provider
         http.authorizeHttpRequests(
                         // the user can access any url without logging in (guests can see geoportal)
@@ -63,6 +58,7 @@ public class TampereOauth2Configuration {
                                 .failureHandler(new OskariLoginFailureHandler("/?loginState=failed"))
                                 .userInfoEndpoint(u -> u.oidcUserService(oidcUserService))
                                 .successHandler(successHandler)
+                                .defaultSuccessUrl("/")
                         //   .loginPage("/")
                 );
 

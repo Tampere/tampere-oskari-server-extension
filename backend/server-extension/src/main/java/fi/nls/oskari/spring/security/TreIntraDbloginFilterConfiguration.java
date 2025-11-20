@@ -70,8 +70,7 @@ public class TreIntraDbloginFilterConfiguration {
     @Order(10)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         log.warn("Adding Tampere internal network filter to loginurl: " + envHelper.getLoginUrl());
-        http.addFilterBefore(treIpFilter, UsernamePasswordAuthenticationFilter.class);
-        OskariSpringSecurityDsl.oskariCommonDsl().init(http);
+        http.with(OskariSpringSecurityDsl.oskariCommonDsl(),  dsl -> dsl.setLoginFilter(treIpFilter));
 
         // Add custom authentication provider
         http.authenticationProvider(oskariAuthenticationProvider);
@@ -80,7 +79,7 @@ public class TreIntraDbloginFilterConfiguration {
                 .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
         );
         http
-                .securityMatcher(envHelper.getLoginUrl(), "/basicauth", "/tre-login")
+                .securityMatcher(envHelper.getLoginUrl(), "/basicauth")
                 .authorizeHttpRequests(authorize ->
                         authorize.requestMatchers("/basicauth").authenticated()
                                 .anyRequest().permitAll())

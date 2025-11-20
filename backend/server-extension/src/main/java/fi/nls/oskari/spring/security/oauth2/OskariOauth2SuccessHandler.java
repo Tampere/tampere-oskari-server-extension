@@ -27,7 +27,7 @@ public class OskariOauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
     @Autowired
     public OskariOauth2SuccessHandler() {
         super();
-        setUseReferer(true);
+        setAlwaysUseDefaultTargetUrl(true);
     }
 
     @Override
