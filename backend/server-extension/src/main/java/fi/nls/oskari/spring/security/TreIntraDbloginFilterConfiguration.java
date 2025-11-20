@@ -2,7 +2,6 @@ package fi.nls.oskari.spring.security;
 
 import fi.nls.oskari.log.LogFactory;
 import fi.nls.oskari.log.Logger;
-
 import fi.nls.oskari.util.PropertyUtil;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -15,7 +14,6 @@ import org.oskari.spring.security.OskariAuthenticationSuccessHandler;
 import org.oskari.spring.security.OskariLoginFailureHandler;
 import org.oskari.spring.security.OskariSpringSecurityDsl;
 import org.oskari.spring.security.database.OskariAuthenticationProvider;
-import org.oskari.spring.security.database.OskariDatabaseSecurityConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,14 +21,11 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.util.matcher.IpAddressMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 
 import java.io.IOException;
 import java.util.Arrays;

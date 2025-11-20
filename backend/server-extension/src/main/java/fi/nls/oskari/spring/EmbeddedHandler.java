@@ -24,7 +24,7 @@ public class EmbeddedHandler {
     private MapController controller;
 
     @RequestMapping("/published/{lang}/{mapId}")
-    public String embeddedMaps(@PathVariable("lang") String lang, @PathVariable("mapId") String mapId, Model model, @OskariParam ActionParameters params) throws Exception {
+    public String embeddedMaps(@PathVariable("lang") String lang, @PathVariable("mapId") String mapId, Model model, @OskariParam ActionParameters params) {
         if (!isSupported(lang)) {
             lang = PropertyUtil.getDefaultLanguage();
         }

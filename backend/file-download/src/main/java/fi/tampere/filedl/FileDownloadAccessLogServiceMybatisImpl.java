@@ -14,7 +14,7 @@ import org.oskari.user.User;
 public class FileDownloadAccessLogServiceMybatisImpl implements FileDownloadAccessLogService {
 
     private static final Class<FileDownloadAccessLogMapper> MAPPER = FileDownloadAccessLogMapper.class;
-    private static final Logger LOG = LogFactory.getLogger(FileServiceMybatisImpl.class);
+    private static final Logger LOG = LogFactory.getLogger(FileDownloadAccessLogServiceMybatisImpl.class);
 
     private final SqlSessionFactory factory;
 

@@ -27,12 +27,10 @@ public class OskariTreOidcUserService extends OidcUserService {
     private static final Logger logger = LogFactory.getLogger(OskariTreOidcUserService.class);
 
     private final DatabaseUserService userService;
-    private final SpringEnvHelper env;
     private final boolean autoregisterOauthUsers;
 
-    public OskariTreOidcUserService(SpringEnvHelper env) {
+    public OskariTreOidcUserService() {
         this.userService = getUserService();
-        this.env = env;
         this.autoregisterOauthUsers = PropertyUtil.getOptional("oskari.oauth2.autoregister", false);
     }
 

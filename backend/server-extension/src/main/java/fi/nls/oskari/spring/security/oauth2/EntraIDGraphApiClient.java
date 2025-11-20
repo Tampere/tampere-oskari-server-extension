@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.nls.oskari.log.LogFactory;
 import fi.nls.oskari.log.Logger;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -58,11 +57,14 @@ public class EntraIDGraphApiClient {
                 .GET()
                 .build();
 
-        try {
-            HttpResponse<String> val = HttpClient.newBuilder().build().send(query, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+        try (HttpClient client = HttpClient.newHttpClient()) {
+            HttpResponse<String> val = client.send(query, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
             return val.body();
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             logger.warn(e, "Error querying user information from EntraID api");
+        } catch (InterruptedException e) {
+            logger.warn(e, "Interrupted while querying user information from EntraID api");
+            Thread.currentThread().interrupt();
         }
         return "";
     }

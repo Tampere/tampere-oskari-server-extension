@@ -1,4 +1,4 @@
-FROM docker.io/library/maven:3.9-eclipse-temurin-17-alpine as buildimage
+FROM docker.io/library/maven:3.9-eclipse-temurin-17-alpine AS buildimage
 #FROM maven:3-openjdk-8-slim as buildimage
 WORKDIR /opt/oskari/
 
