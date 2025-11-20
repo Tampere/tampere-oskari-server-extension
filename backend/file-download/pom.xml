@@ -3,7 +3,7 @@
     <parent>
         <groupId>fi.tampere.oskari</groupId>
         <artifactId>tampere-parent</artifactId>
-        <version>3.1.26</version>
+        <version>3.1.27-SNAPSHOT</version>
     </parent>
 
     <artifactId>file-download</artifactId>
