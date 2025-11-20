@@ -23,6 +23,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
@@ -70,6 +71,7 @@ public class TreIntraDbloginFilterConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         log.warn("Adding Tampere internal network filter to loginurl: " + envHelper.getLoginUrl());
         http.addFilterBefore(treIpFilter, UsernamePasswordAuthenticationFilter.class);
+        OskariSpringSecurityDsl.disableUnnecessarySessions(http);
 
         // Add custom authentication provider
         http.authenticationProvider(oskariAuthenticationProvider);
