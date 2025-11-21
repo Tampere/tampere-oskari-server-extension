@@ -57,7 +57,8 @@ public class EntraIDGraphApiClient {
                 .GET()
                 .build();
 
-        try (HttpClient client = HttpClient.newHttpClient()) {
+        try {
+            HttpClient client = HttpClient.newHttpClient();
             HttpResponse<String> val = client.send(query, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
             return val.body();
         } catch (IOException e) {
