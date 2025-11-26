@@ -39,7 +39,7 @@ public class OskariTreOidcUserService extends OidcUserService {
         OidcUser oidcUser = super.loadUser(userRequest);
         try {
             User user = getUser(oidcUser);
-            if(user == null){
+            if (user == null) {
                 throw new OAuth2AuthenticationException(OAuth2ErrorCodes.ACCESS_DENIED);
             }
             return new OskariTreOidcUser(oidcUser, user.getScreenname(), OskariUserHelper.getRoles(user.getRoles()));
@@ -59,8 +59,13 @@ public class OskariTreOidcUserService extends OidcUserService {
             user = new User();
             user.setCreated(OffsetDateTime.now());
             user.addRole(Role.getDefaultUserRole());
+            // TODO: Add roles from OidcUser?
         }
-        if (user == null || !user.hasRole(Role.getDefaultUserRole().getName())) {
+        Role defaultRole = Role.getDefaultUserRole();
+        if (user == null || !user.hasRole(defaultRole.getName())) {
+            if (user != null) {
+                logger.debug("User {} does not have default role {}, Users roles {}", user, defaultRole.getName(), user.getRoles());
+            }
             return null;
         }
 
