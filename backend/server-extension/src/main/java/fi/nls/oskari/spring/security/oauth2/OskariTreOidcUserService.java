@@ -6,7 +6,6 @@ import fi.nls.oskari.service.ServiceException;
 import fi.nls.oskari.service.UserService;
 import fi.nls.oskari.user.DatabaseUserService;
 import fi.nls.oskari.util.PropertyUtil;
-import org.oskari.spring.SpringEnvHelper;
 import org.oskari.spring.security.OskariUserHelper;
 import org.oskari.user.Role;
 import org.oskari.user.User;

@@ -37,9 +37,9 @@ public class OskariOauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
         if (!(principal instanceof OidcUser oidcUser)) {
             throw new IllegalArgumentException("Expected DefaultOidcUser, got: " + principal.getClass().getName());
         }
-
-        super.onAuthenticationSuccess(request, response, authentication);
+        logger.info("Logging in OIDC user {}", oidcUser);
         helper.onAuthenticationSuccess(request, response, oidcUser.getName());
+        super.onAuthenticationSuccess(request, response, authentication);
     }
 
 
