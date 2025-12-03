@@ -50,7 +50,7 @@ public class TampereOauth2Configuration {
                                 .failureHandler(new OskariLoginFailureHandler("/?loginState=failed"))
                                 .userInfoEndpoint(u -> u.oidcUserService(oidcUserService))
                                 .successHandler(successHandler)
-                                .defaultSuccessUrl("/")
+//                                .defaultSuccessUrl("/")
                         //   .loginPage("/")
                 );
 
