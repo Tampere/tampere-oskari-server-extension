@@ -151,16 +151,9 @@
                 </c:when>
                 <%-- Otherwise show appropriate logins --%>
                 <c:otherwise>
-                    <c:set var="userIp" value="${header['X-FORWARDED-FOR']}" />
-<!-- Header ${header.keySet()} -->
-                    <c:if test="${fn:startsWith(header['X-FORWARDED-FOR'], '10.')}">
-                        <!-- StartsWith true} -->
-                    </c:if>
-                    <!-- UserIP ${userIp} -->
-                    <c:if test="${!empty param.login || fn:startsWith(userIp, '10.')}">
+                    <c:if test="${!empty param.login || fn:startsWith(pageContext.request.remoteAddr, '10.')}">
                         <a href="${pageContext.request.contextPath}/tre-login">Kirjaudu</a><hr />
                     </c:if>
-                    <%-- test end --%>
                 </c:otherwise>
             </c:choose>
         </div>
