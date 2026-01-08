@@ -14,7 +14,7 @@
 
 
     <title>Oskari - ${viewName}</title>
-		
+
     <!-- ############# css ################# -->
     <link
             rel="stylesheet"
@@ -101,7 +101,7 @@
                 padding-left: 12px;
                 padding-bottom: 4px;
                 height: 50px;
-                
+
             }
         }
 		@media screen and (max-width: 1400px) {
@@ -152,6 +152,11 @@
                 <%-- Otherwise show appropriate logins --%>
                 <c:otherwise>
                     <c:set var="userIp" value="${header['X-FORWARDED-FOR']}" />
+<!-- Header ${header.keySet()} -->
+                    <c:if test="${fn:startsWith(header['X-FORWARDED-FOR'], '10.')}">
+                        <!-- StartsWith true} -->
+                    </c:if>
+                    <!-- UserIP ${userIp} -->
                     <c:if test="${!empty param.login || fn:startsWith(userIp, '10.')}">
                         <a href="${pageContext.request.contextPath}/tre-login">Kirjaudu</a><hr />
                     </c:if>
