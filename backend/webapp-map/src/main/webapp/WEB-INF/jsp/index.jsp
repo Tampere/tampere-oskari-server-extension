@@ -152,17 +152,8 @@
                 <%-- Otherwise show appropriate logins --%>
                 <c:otherwise>
                     <c:set var="userIp" value="${header['X-FORWARDED-FOR']}" />
-                    <c:if test="${!empty param.login || _allowed_to_login}">
-                        <a href="${pageContext.request.contextPath}/oauth2">Kirjaudu TRE tunnuksilla</a><hr />
-                    </c:if>
-                    <c:if test="${!empty param.login && _allowed_to_login}">
-                        <form action='${pageContext.request.contextPath}/j_security_check' method="post" accept-charset="UTF-8">
-                            <input size="16" id="username" name="j_username" type="text" placeholder="<spring:message code="username" text="Username" />" autofocus
-                                required>
-                            <input size="16" id="password" name="j_password" type="password" placeholder="<spring:message code="password" text="Password" />" required>
-                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                            <input type="submit" id="submit" value="<spring:message code="login" text="Log in" />">
-                        </form>
+                    <c:if test="${!empty param.login || fn:startsWith(userIp, '10.')}">
+                        <a href="${pageContext.request.contextPath}/tre-login">Kirjaudu</a><hr />
                     </c:if>
                     <%-- test end --%>
                 </c:otherwise>
