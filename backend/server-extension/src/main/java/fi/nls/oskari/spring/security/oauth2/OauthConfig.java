@@ -62,6 +62,7 @@ public class OauthConfig {
                 .scope("openid", "profile", "email", "User.Read")
                 .clientId(entraIdAppid)
                 .clientSecret(entraIdClientSecret)
+                .authorizationUri("https://login.microsoftonline.com/" + entraidTenant + "/oauth2/v2.0/authorize?prompt=select_account")
                 .clientName("tampere")
                 .build();
     }
