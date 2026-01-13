@@ -171,6 +171,53 @@
             overflow: hidden;
         }
 
+        .local-login-container {
+            display: none;
+        }
+
+        .local-login-container.visible {
+            display: block;
+        }
+
+        .show-local-login-btn {
+            display: block;
+            width: 100%;
+            padding: 12px 24px;
+            background: transparent;
+            color: var(--dark-gray);
+            border: 2px solid var(--light-sand);
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .show-local-login-btn:hover {
+            background: var(--light-sand);
+            border-color: var(--dark-gray);
+        }
+
+        .show-local-login-btn.hidden {
+            display: none;
+        }
+
+        .warning-message {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 4px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            color: #856404;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .warning-message strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+
         @media (max-width: 480px) {
             .content {
                 padding: 30px 20px;
@@ -188,32 +235,52 @@
     <h2>Kirjaudu sisään</h2>
 
     <a href="${pageContext.request.contextPath}/oauth2" class="oauth-link">
-        Kirjaudu TRE tunnuksilla
+        Kirjaudu Tampereen EntraID tunnuksilla
     </a>
 
     <div class="divider">
         <span>tai</span>
     </div>
 
-    <form class="login-form" method="post" action="${pageContext.request.contextPath}/j_security_check">
-        <div class="form-group">
-            <label for="j_username">
-                <spring:message code="username" text="Käyttäjätunnus"/>
-            </label>
-            <input type="text" id="j_username" name="j_username" required autofocus/>
+    <button type="button" class="show-local-login-btn" onclick="toggleLocalLogin()">
+        Kirjaudu paikallisilla tunnuksilla
+    </button>
+
+    <div id="localLoginContainer" class="local-login-container">
+        <div class="warning-message">
+            <strong>Varoitus</strong>
+            Yleensä kirjautumiseen tulee käyttää EntraID tunnuksia.
         </div>
 
-        <div class="form-group">
-            <label for="j_password">
-                <spring:message code="password" text="Salasana"/>
-            </label>
-            <input type="password" id="j_password" name="j_password" required/>
-        </div>
+        <form class="login-form" method="post" action="${pageContext.request.contextPath}/j_security_check">
+            <div class="form-group">
+                <label for="j_username">
+                    <spring:message code="username" text="Käyttäjätunnus"/>
+                </label>
+                <input type="text" id="j_username" name="j_username" required/>
+            </div>
 
-        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-        <button type="submit" class="primary">Kirjaudu</button>
-    </form>
+            <div class="form-group">
+                <label for="j_password">
+                    <spring:message code="password" text="Salasana"/>
+                </label>
+                <input type="password" id="j_password" name="j_password" required/>
+            </div>
+
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            <button type="submit" class="primary">Kirjaudu</button>
+        </form>
+    </div>
 </div>
+
+<script>
+    function toggleLocalLogin() {
+        const container = document.getElementById('localLoginContainer');
+        const btn = document.querySelector('.show-local-login-btn');
+        container.classList.add('visible');
+        btn.classList.add('hidden');
+    }
+</script>
 
 </body>
 </html>
