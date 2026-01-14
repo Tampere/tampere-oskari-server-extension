@@ -79,7 +79,6 @@ jobs:
         working-directory: backend
         run: |
           mkdir -p ./webapp-map/src/main/webapp/Oskari/ && tar -xz -C ./webapp-map/src/main/webapp/Oskari/ -f ./oskari-frontend*-prod.tar.gz
-          find ./webapp-map/src/main/webapp/Oskari/ -type f -size +1000c \( -name '*.css' -o -name '*.js' -o -name "*.svg" -o -name "*.json" -o -name "*.map" \) -print0 -exec gzip -k9 {} \; -exec brotli -kZ {} \;
 
       - name: "Extract frontend version"
         working-directory: backend
