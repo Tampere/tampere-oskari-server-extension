@@ -15,6 +15,8 @@ COPY apps ./apps
 COPY bundles ./bundles
 COPY .storybook ./.storybook
 
+RUN nice npm run test
+
 RUN nice npm run build
 
 # Precompress images for tomcat to serve
