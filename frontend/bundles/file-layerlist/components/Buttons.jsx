@@ -50,7 +50,7 @@ BasketLink.propTypes = {
 
 // {"external":false,"layerId":2276,"fileExtension":"pdf","id":4,"locale":"TRE 1905198","featureId":"TRE 1905198"}
 export const getFileLinksForFeature = (layerId, files = [], addBasketLink, item) => {
-    var url = Oskari.urls.getRoute('WFSAttachments') + `&layerId=${layerId}`;
+    const url = Oskari.urls.getRoute('WFSAttachments') + `&layerId=${layerId}`;
     const fileLinks = files.map(f => {
         let fileLink = `${url}&fileId=${f.id}`;
         if (f.external) {

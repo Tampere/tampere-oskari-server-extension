@@ -2,9 +2,9 @@ const noopFunc = () => {};
 
 function uploadFiles (layerId, files, progressCB = noopFunc, successCB = noopFunc, errorCB = noopFunc) {
     progressCB(0);
-    var url = Oskari.urls.getRoute('WFSAttachments');
-    var xhr = new XMLHttpRequest();
-    var formData = new FormData();
+    const url = Oskari.urls.getRoute('WFSAttachments');
+    const xhr = new XMLHttpRequest();
+    const formData = new FormData();
     xhr.open('POST', url, true);
     xhr.setRequestHeader('X-XSRF-TOKEN', Oskari.app.getXSRFToken());
 
@@ -34,30 +34,30 @@ function uploadFiles (layerId, files, progressCB = noopFunc, successCB = noopFun
 }
 
 function listLayersWithFiles (successCB, layerJSON = false) {
-    var url = Oskari.urls.getRoute('WFSAttachments', { json: layerJSON });
+    const url = Oskari.urls.getRoute('WFSAttachments', {json: layerJSON});
     jQuery.get(url, successCB);
 }
 
 function listFilesForLayer (layerId, successCB) {
-    var url = Oskari.urls.getRoute('WFSAttachments') +
+    const url = Oskari.urls.getRoute('WFSAttachments') +
         `&layerId=${layerId}`;
     jQuery.get(url + `&layerId=${layerId}`, successCB);
 }
 
 function listFilesForFeature (layerId, featureId, successCB) {
-    var url = Oskari.urls.getRoute('WFSAttachments') +
+    const url = Oskari.urls.getRoute('WFSAttachments') +
         `&layerId=${layerId}&featureId=${featureId}`;
     jQuery.get(url, successCB);
 }
 
 function openFile (layerId, fileId) {
-    var url = Oskari.urls.getRoute('WFSAttachments') +
+    const url = Oskari.urls.getRoute('WFSAttachments') +
         `&layerId=${layerId}&fileId=${fileId}`;
     window.open(url, '_blank');
 }
 
 function removeFile (layerId, fileId, successCB) {
-    var url = Oskari.urls.getRoute('WFSAttachments') +
+    const url = Oskari.urls.getRoute('WFSAttachments') +
         `&layerId=${layerId}&fileId=${fileId}`;
     jQuery.ajax({
         url,
@@ -67,7 +67,7 @@ function removeFile (layerId, fileId, successCB) {
 }
 
 function getFileLinksForFeature (layerId, files) {
-    var url = Oskari.urls.getRoute('WFSAttachments') + `&layerId=${layerId}`;
+    const url = Oskari.urls.getRoute('WFSAttachments') + `&layerId=${layerId}`;
     const html = files.map(f => {
         let fileLink = `&fileId=${f.id}`;
         if (f.external) {

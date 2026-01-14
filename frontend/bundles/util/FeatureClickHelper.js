@@ -74,7 +74,7 @@ export const createFeatureClickHelper = (sandbox = Oskari.getSandbox()) => {
     const listenerModule = {
         getName: () => NAME,
         onEvent: (event) => {
-            var handler = eventHandlers[event.getName()];
+            const handler = eventHandlers[event.getName()];
             if (!handler) {
                 return;
             }

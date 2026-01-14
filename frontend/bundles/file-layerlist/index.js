@@ -1,5 +1,5 @@
-import './instance'
+import './instance';
 
-Oskari.bundle( 'file-layerlist', () =>
+Oskari.bundle('file-layerlist', () =>
     Oskari.clazz.create('Oskari.file-layerlist.BundleInstance')
 );

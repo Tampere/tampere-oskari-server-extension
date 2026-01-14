@@ -125,7 +125,7 @@ function updateUI (layer, progress) {
 }
 
 function removeFile (layerId, fileId) {
-    var r = confirm(`Haluatko poistaa tiedoston?`);
+    const r = confirm(`Haluatko poistaa tiedoston?`);
     if (r === true) {
         FileService.removeFile(layerId, fileId, () => {
             // console.log(`Removed from ${layerId} file ${fileId}`);
@@ -143,7 +143,7 @@ function changeLayerAttr (value, callServer) {
         const oldValue = attrib[LayerHelper.KEY_ATTRIBUTES_ATTACHMENT];
         attrib[LayerHelper.KEY_ATTRIBUTES_ATTACHMENT] = value;
         maplayer.setAttributes(attrib);
-        var url = Oskari.urls.getRoute('WFSAttachmentsLayer') + `&layerId=${layer.id}&attachmentKey=${value}`;
+        const url = Oskari.urls.getRoute('WFSAttachmentsLayer') + `&layerId=${layer.id}&attachmentKey=${value}`;
         jQuery.ajax({
             url: url,
             type: 'PUT',

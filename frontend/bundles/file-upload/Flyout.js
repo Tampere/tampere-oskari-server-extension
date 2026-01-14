@@ -67,9 +67,9 @@ Oskari.clazz.define(
          * @method startPlugin
          */
         startPlugin: function () {
-            var container = this.getEl();
+            const container = this.getEl();
             container.addClass('file-upload');
-            var tooltipCont = jQuery(this.__templates.help).clone();
+            const tooltipCont = jQuery(this.__templates.help).clone();
             tooltipCont.attr('title', this.loc('flyout.help'));
             container.append(tooltipCont);
 
@@ -123,7 +123,7 @@ Oskari.clazz.define(
          * @return {jQuery} returns the template to place on the DOM
          */
         createUi: function () {
-            var template = jQuery(this.__templates.base).clone();
+            const template = jQuery(this.__templates.base).clone();
             template.find('div.info').html(
                 this.loc('flyout.description', {
                     maxSize: this.maxFileSize
@@ -133,7 +133,7 @@ Oskari.clazz.define(
             return template;
         },
         bindListeners: function () {
-            var btn = this.container.find('form input[type=button]');
+            const btn = this.container.find('form input[type=button]');
             this.fileInput.on('file-input', function (hasFile) {
                 if (hasFile) {
                     btn.prop('disabled', false);
@@ -151,8 +151,8 @@ Oskari.clazz.define(
          * @return {jQuery}
          */
         __createFileImportTemplate: function () {
-            var me = this;
-            var file = jQuery(this.__templates.file).clone();
+            const me = this;
+            const file = jQuery(this.__templates.file).clone();
             file.find('.file-input-container').append(
                 this.fileInput.getElement()
             );
@@ -170,9 +170,9 @@ Oskari.clazz.define(
             return file;
         },
         submitUserLayer: function () {
-            var me = this;
-            var formData = new FormData();
-            var url = 'jotain';
+            const me = this;
+            const formData = new FormData();
+            const url = 'jotain';
             // formData.append('layer-name', formValues.name);
             formData.append('file-import', this.fileInput.getFiles());
             jQuery.ajax({
@@ -184,7 +184,7 @@ Oskari.clazz.define(
                 processData: false,
                 dataType: 'json',
                 xhr: function () {
-                    var myXhr = jQuery.ajaxSettings.xhr(); // new XMLHttpRequest()
+                    const myXhr = jQuery.ajaxSettings.xhr(); // new XMLHttpRequest()
                     if (myXhr.upload) {
                         myXhr.upload.addEventListener('loadstart', function (e) {
                             me.progressSpinner.start();
@@ -210,7 +210,7 @@ Oskari.clazz.define(
             });
         },
         getFormValues: function () {
-            var form = this.getTemplate().find('form');
+            const form = this.getTemplate().find('form');
             return {
                 name: form
                     .find('.name input')
@@ -233,8 +233,8 @@ Oskari.clazz.define(
          * @return {Boolean}
          */
         __validateForm: function () {
-            var values = this.getFormValues();
-            var errors = [];
+            const values = this.getFormValues();
+            const errors = [];
             if (!values.name) {
                 errors.push(this.loc('flyout.validations.error.name'));
             }
@@ -273,11 +273,11 @@ Oskari.clazz.define(
          */
         __finish: function (json) {
             this.progressSpinner.stop();
-            var title = this.loc('flyout.finish.success.title');
-            var msg = this.loc('flyout.finish.success.message', {
+            const title = this.loc('flyout.finish.success.title');
+            let msg = this.loc('flyout.finish.success.message', {
                 count: json.featuresCount
             });
-            var fadeout = true;
+            let fadeout = true;
 
             if (json.warning !== undefined && json.warning.featuresSkipped) {
                 msg =
@@ -294,7 +294,7 @@ Oskari.clazz.define(
         },
         __error: function (response) {
             this.progressSpinner.stop();
-            var errors = this.loc('flyout.error');
+            const errors = this.loc('flyout.error');
             if (
                 response.status === 404 ||
                 !response.responseJSON ||
@@ -303,8 +303,8 @@ Oskari.clazz.define(
                 this.__showMessage(errors.title, errors.generic, false);
                 return;
             }
-            var list = [];
-            var msg;
+            const list = [];
+            let msg;
             const errorInfo = response.responseJSON.info;
             const key = errorInfo.error;
             switch (key) {
@@ -373,14 +373,14 @@ Oskari.clazz.define(
          */
         __showMessage: function (title, message, fadeout, msgList, listType) {
             fadeout = fadeout !== false;
-            var dialog = Oskari.clazz.create(
+            const dialog = Oskari.clazz.create(
                 'Oskari.userinterface.component.Popup'
             );
-            var btn = dialog.createCloseButton(
+            const btn = dialog.createCloseButton(
                 this.loc('flyout.actions.close')
             );
             dialog.addClass('myplacesimport');
-            var content = message === undefined ? '' : message + ' ';
+            let content = message === undefined ? '' : message + ' ';
             if (Array.isArray(msgList)) {
                 if (listType === 'li') {
                     content +=

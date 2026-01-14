@@ -2,7 +2,7 @@ import GeoJSONReader from 'jsts/org/locationtech/jts/io/GeoJSONReader';
 import RelateOp from 'jsts/org/locationtech/jts/operation/relate/RelateOp';
 
 export const addFeaturesToMap = (features, opts = {}) => {
-    var options = {
+    const options = {
         /*
         featureStyle: {
             stroke: {

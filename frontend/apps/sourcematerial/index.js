@@ -2,7 +2,7 @@
  * Start when dom ready
  */
 jQuery(document).ready(function () {
-    var getAppSetupParams = {};
+    const getAppSetupParams = {};
     // populate url with possible control parameters
     Object.keys(window.controlParams || {}).forEach(function (key) {
         getAppSetupParams[key] = window.controlParams[key];
@@ -14,7 +14,7 @@ jQuery(document).ready(function () {
         data: getAppSetupParams,
         url: window.location.pathname + 'action?action_route=GetAppSetup',
         success: function (appSetup) {
-            var app = Oskari.app;
+            const app = Oskari.app;
             if (!appSetup.startupSequence) {
                 jQuery('#mapdiv').append('Unable to start');
                 return;

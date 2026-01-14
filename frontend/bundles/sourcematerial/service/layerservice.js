@@ -70,7 +70,7 @@ const loadFeatures = (layer) => {
         return;
     }
     startLoading(layer);
-    var url = Oskari.urls.getRoute('SourceMaterialFeatures', {
+    const url = Oskari.urls.getRoute('SourceMaterialFeatures', {
         bbox: bbox.join(),
         srs: Oskari.getSandbox().getMap().getSrsName() || 'EPSG:3067',
         id: layer
@@ -160,7 +160,7 @@ export const getService = (done) => {
     if (service) {
         return done(service);
     }
-    var url = Oskari.urls.getRoute('SourceMaterial');
+    const url = Oskari.urls.getRoute('SourceMaterial');
     jQuery.get(url, (result) => {
         service = parseResult(result);
         done(service);

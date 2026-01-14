@@ -13,7 +13,7 @@ export const getLayers = (callback) => {
     FileService.listLayersWithFiles(layersJSON => {
         // write to "global"
         layers = layersJSON.map(json => {
-            var mapLayer = service.createMapLayer(json);
+            const mapLayer = service.createMapLayer(json);
             // unsupported maplayer type returns null so check for it
             if (mapLayer) {
                 service.addLayer(mapLayer);
