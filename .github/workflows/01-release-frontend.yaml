@@ -50,23 +50,14 @@ jobs:
       - name: 'Build production Inventory Image'
         working-directory: frontend
         run: |
-          docker build . --target buildimage --tag  ${{ steps.meta.outputs.tags }}-prod --build-arg BUILD_TARGET=build
-      - name: 'Build test Inventory Image'
-        working-directory: frontend
-        run: |
-          docker build . --target buildimage --tag ${{ steps.meta.outputs.tags }}-test --build-arg BUILD_TARGET=build:test
+          docker build . --target buildimage --tag  ${{ steps.meta.outputs.tags }}-prod
       - name: 'Extract production gzip'
         working-directory: frontend
         run: |
           id=$(docker create  ${{ steps.meta.outputs.tags }}-prod)
           docker cp $id:/opt/oskari/dist - | gzip > ../oskari-frontend-${{ github.ref_name }}-prod.tar.gz
           docker rm -v $id
-      - name: 'Extract test gzip'
-        working-directory: frontend
-        run: |
-          id=$(docker create ${{ steps.meta.outputs.tags }}-test)
-          docker cp $id:/opt/oskari/dist - | gzip > ../oskari-frontend-${{ github.ref_name }}-test.tar.gz
-          docker rm -v $id
+
       - name: "Release zipped images"
         uses: softprops/action-gh-release@v2
         with:
@@ -74,8 +65,6 @@ jobs:
           name: Frontend ${{env.FRONTEND_VERSION}}
           files: |
             oskari-frontend-${{ github.ref_name }}-prod.tar.gz
-            oskari-frontend-${{ github.ref_name }}-test.tar.gz
-
       - name: Trigger creation of server tag
         run: gh workflow run "02 - Build backend tag"
         env:

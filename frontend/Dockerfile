@@ -22,7 +22,7 @@ RUN nice npm run build
 
 # Precompress images for tomcat to serve
 RUN MAX_PARALLEL="$(($(nproc)>10?10:$(nproc)))" && echo "Running with $MAX_PARALLEL threads" && \
-    nice find dist -type f \
+    nice find dist -type f -size +1000c \
     \( -name '*.css' -o -name '*.js' -o -name "*.svg" -o -name "*.json" -o -name "*.map" \) \
     -print0 | parallel -0 -j${MAX_PARALLEL} 'gzip -k9 {} && brotli -kZ {}'
 

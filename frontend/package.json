@@ -7,7 +7,7 @@
   ],
   "dependencies": {
     "oskari-frontend": "git+https://git@github.com/oskariorg/oskari-frontend.git#3.2.1",
-    "oskari-frontend-contrib": "git+https://git@github.com/tuomari/oskari-frontend-contrib.git#feature/migrate-to-3.2"
+    "oskari-frontend-contrib": "git+https://git@github.com/tuomari/oskari-frontend-contrib.git#feature/migrate-to-3.2-2"
   },
   "devDependencies": {
     "@cyclonedx/bom": "^3.10.1",
@@ -22,7 +22,6 @@
     "dev-mode:available": "node ./node_modules/oskari-frontend/scripts/oskari-dev-mode-requirements",
     "dev-mode:clean": "(rm -r node_modules || true) && (rm package-lock.json || true)",
     "build": "npm run dev-mode:off && webpack --config ./node_modules/oskari-frontend/webpack.config.js --mode production --progress --env appdef=apps",
-    "build:test": "npm run dev-mode:off && webpack --config ./node_modules/oskari-frontend/webpack.config.js --mode production --progress --env appdef=apps",
     "start": "npm run dev-mode:off && webpack-dev-server --config ./node_modules/oskari-frontend/webpack.config.js --hot --env appdef=devapp:apps",
     "start:dev": "npm run dev-mode:on && npm run dev-mode:on && node ./node_modules/oskari-frontend/node_modules/webpack-dev-server/bin/webpack-dev-server.js --config ./node_modules/oskari-frontend/webpack.config.js --hot --env appdef=devapp:apps",
     "build:dev": "npm run dev-mode:on && npm run dev-mode:on && node ./node_modules/oskari-frontend/node_modules/webpack/bin/webpack.js --config ./node_modules/oskari-frontend/webpack.config.js --mode production --progress --env appdef=apps",
