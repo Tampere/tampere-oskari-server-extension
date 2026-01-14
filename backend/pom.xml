@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>fi.tampere.oskari</groupId>
     <artifactId>tampere-parent</artifactId>
-    <version>3.1.35-SNAPSHOT</version>
+    <version>3.2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Tampere Oskari</name>
 
