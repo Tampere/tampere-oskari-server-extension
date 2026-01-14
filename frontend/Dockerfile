@@ -1,11 +1,8 @@
-FROM docker.io/library/node:20-bullseye AS buildimage
-# Use bullseye, because python 3.11 causes problems. Bullseye has python 3.9
+FROM docker.io/library/node:24 AS buildimage
 
 RUN  export DEBIAN_FRONTEND=noninteractive && apt-get update \
   && apt-get install --no-install-recommends --no-install-suggests -y \
   git python3 brotli parallel
-
-ENV NODE_OPTIONS="--openssl-legacy-provider --max-old-space-size=8192"
 
 WORKDIR /opt/oskari
 
