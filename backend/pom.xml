@@ -8,9 +8,9 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <oskari.version>3.1.0</oskari.version>
+        <oskari.version>3.2.0</oskari.version>
         <!-- NOTE! this should match spring security version in oskari -->
-        <spring-security.version>6.5.3</spring-security.version>
+        <spring-security.version>6.5.5</spring-security.version>
         <terrain.profile.version>1.1</terrain.profile.version>
         <java.version>17</java.version>
     </properties>

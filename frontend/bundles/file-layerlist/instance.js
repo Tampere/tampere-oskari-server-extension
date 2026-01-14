@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { getReactRoot } from 'oskari-ui/components/window';
 import { Message } from 'oskari-ui';
 import { Messaging, LocaleProvider } from 'oskari-ui/util';
 import { MainPanel } from './components/MainPanel';
@@ -122,10 +122,10 @@ function updateUI () {
         // update highlighted features based on basket content
         highlightFeatures();
         const selectedLayers = Oskari.getSandbox().getMap().getLayers();
-        ReactDOM.render(
+        getReactRoot(getRoot()).render(
             <LocaleProvider value={{ bundleKey: BUNDLE_ID }}>
                 <MainPanel layers={layers} selectedLayers={selectedLayers} drawControl={toggleDrawing} isDrawing={isDrawing}/>
-            </LocaleProvider>, getRoot());
+            </LocaleProvider>);
     });
 }
 

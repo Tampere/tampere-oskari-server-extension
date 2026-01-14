@@ -1,5 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { getReactRoot } from 'oskari-ui/components/window';
+import { unmountReactRoot } from 'oskari-ui/components/window';
 import Overlay from 'ol/Overlay';
 import { LocaleProvider } from 'oskari-ui/util';
 import './Popup.css';
@@ -17,10 +18,10 @@ export const hidePopup = () => {
 const addMapOverlay = () => {
     const wrapper = document.createElement('div');
     document.body.appendChild(wrapper);
-    ReactDOM.render(<div id="popup" className="ol-popup">
+    getReactRoot(wrapper).render(<div id="popup" className="ol-popup">
         <a href="#" id="popup-closer" className="ol-popup-closer"></a>
         <div id="popup-content"></div>
-    </div>, wrapper);
+    </div>);
 
     overlay = new Overlay({
         element: document.getElementById('popup'),
@@ -40,9 +41,9 @@ export const showPopup = (x, y, content) => {
     }
     const el = document.getElementById('popup-content');
     // clear previous content
-    ReactDOM.unmountComponentAtNode(el);
+    unmountReactRoot(el);
     // render new content
-    ReactDOM.render(<LocaleProvider value={{ bundleKey: 'sourcematerial' }}>{content}</LocaleProvider>, el);
+    getReactRoot(el).render(<LocaleProvider value={{ bundleKey: 'sourcematerial' }}>{content}</LocaleProvider>);
     overlay.setPosition([x, y]);
     const closeBtn = document.getElementById('popup-closer');
     if (!closeBtn.onclick) {

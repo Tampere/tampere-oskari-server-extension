@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { getReactRoot } from 'oskari-ui/components/window';
 import { Messaging, LocaleProvider } from 'oskari-ui/util';
 import { MainPanel } from './components/MainPanel';
 import { getService } from './service/layerservice';
@@ -86,13 +86,13 @@ function updateUI () {
             return;
         }
         const state = service.getState();
-        ReactDOM.render(
+        getReactRoot(getRoot()).render(
             <LocaleProvider value={{ bundleKey: SOURCEMATERIAL_ID }}>
                 <MainPanel service={service}
                     drawControl={toggleDrawing}
                     isDrawing={isDrawing}
                     state={state} />
-            </LocaleProvider>, getRoot());
+            </LocaleProvider>);
     });
 }
 

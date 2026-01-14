@@ -3,7 +3,7 @@ FROM docker.io/library/node:20-bullseye AS buildimage
 
 RUN  export DEBIAN_FRONTEND=noninteractive && apt-get update \
   && apt-get install --no-install-recommends --no-install-suggests -y \
-  git python3 brotli
+  git python3 brotli parallel
 
 ENV NODE_OPTIONS="--openssl-legacy-provider --max-old-space-size=8192"
 
@@ -17,13 +17,14 @@ RUN npm install
 COPY apps ./apps
 COPY bundles ./bundles
 COPY .storybook ./.storybook
-COPY .eslintrc.js ./
 
-ARG BUILD_TARGET=build
-RUN nice npm run "$BUILD_TARGET"
+RUN nice npm run build
 
 # Precompress images for tomcat to serve
-RUN nice find dist -type f \( -name '*.css' -o -name '*.js' -o -name "*.svg" -o -name "*.json" -o -name "*.map" \) -print0 -exec gzip -k9 {} \; -exec brotli -kZ {} \;
+RUN MAX_PARALLEL="$(($(nproc)>10?10:$(nproc)))" && echo "Running with $MAX_PARALLEL threads" && \
+    nice find dist -type f \
+    \( -name '*.css' -o -name '*.js' -o -name "*.svg" -o -name "*.json" -o -name "*.map" \) \
+    -print0 | parallel -0 -j${MAX_PARALLEL} 'gzip -k9 {} && brotli -kZ {}'
 
 
 

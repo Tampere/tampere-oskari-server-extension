@@ -1,18 +1,19 @@
-import 'oskari-loader!../../bundles/lang-overrides/bundle.js';
+import 'oskari-bundle!../../bundles/lang-overrides';
+
 
 import 'oskari-bundle!oskari-frontend/bundles/framework/mapfull';
 import 'oskari-loader!oskari-frontend/packages/framework/bundle/oskariui/bundle.js';
 import 'oskari-loader!oskari-frontend/packages/framework/bundle/ui-components/bundle.js';
 import 'oskari-loader!oskari-frontend/packages/framework/bundle/divmanazer/bundle.js';
 
-import 'oskari-loader!oskari-frontend/packages/mapping/ol/mapmodule/bundle.js';
-import 'oskari-loader!oskari-frontend/packages/mapping/ol/mapwmts/bundle.js';
-import 'oskari-loader!oskari-frontend/packages/mapping/ol/wfsvector/bundle.js';
+import 'oskari-bundle!oskari-frontend/bundles/mapping/mapmodule/map2d_ol';
 
-import 'oskari-loader!oskari-frontend/packages/mapping/ol/toolbar/bundle.js';
-import 'oskari-loader!oskari-frontend/packages/mapping/ol/drawtools/bundle.js';
 
-import 'oskari-loader!../../bundles/file-layerlist/bundle.js';
+
+import 'oskari-bundle!oskari-frontend/bundles/mapping/toolbar';
+import 'oskari-bundle!oskari-frontend/bundles/mapping/drawtools';
+
+import 'oskari-bundle!../../bundles/file-layerlist';
 import '../../bundles/hacks.js';
 import './css/overwritten.css';
 

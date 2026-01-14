@@ -53,7 +53,7 @@ export const MainPanel = ({ layers = [], selectedLayers = [], drawControl, isDra
                 placement={'left'}
                 closable={true}
                 onClose={() => showLayerSelect(false)}
-                visible={layerSelectVisible}
+                open={layerSelectVisible}
             >
                 { !hasLayers &&
                 <b><Message messageKey='noLayersWithFiles' /></b>
@@ -76,7 +76,7 @@ export const MainPanel = ({ layers = [], selectedLayers = [], drawControl, isDra
                 bodyStyle={{
                     paddingTop: 0
                 }}
-                visible={basketVisible} >
+                open={basketVisible} >
                 <BasketContent
                     contents={Basket.list()}
                     onRemove={(item) => Basket.remove(item) }/>

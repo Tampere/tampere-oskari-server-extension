@@ -1,4 +1,5 @@
-import 'oskari-loader!../../bundles/lang-overrides/bundle.js';
+import 'oskari-bundle!../../bundles/lang-overrides';
+
 
 // These framework bundles have to be imported first
 import 'oskari-bundle!oskari-frontend/bundles/framework/mapfull';
@@ -6,21 +7,21 @@ import 'oskari-loader!oskari-frontend/packages/framework/bundle/oskariui/bundle.
 import 'oskari-loader!oskari-frontend/packages/framework/bundle/divmanazer/bundle.js';
 
 // Then import mapmodule and rest of the application - 3D mapmodule
-import 'oskari-loader!oskari-frontend/packages/mapping/olcs/mapmodule/bundle.js';
-import 'oskari-loader!oskari-frontend/packages/mapping/olcs/map3dtiles/bundle.js';
+import 'oskari-bundle!oskari-frontend/bundles/mapping/mapmodule/map3d_olcs';
+import 'oskari-bundle!oskari-frontend/bundles/mapping/tiles3d';
 
-import 'oskari-loader!oskari-frontend/packages/mapping/ol/mapwmts/bundle.js';
-import 'oskari-loader!oskari-frontend/packages/mapping/ol/wfsvector/bundle.js';
-import 'oskari-loader!oskari-frontend/packages/mapping/ol/mapmyplaces/bundle.js';
-import 'oskari-loader!oskari-frontend/packages/mapping/ol/mapuserlayers/bundle.js';
-import 'oskari-loader!oskari-frontend/packages/mapping/ol/maparcgis/bundle.js';
+
+
+import 'oskari-bundle!oskari-frontend/bundles/mapping/mapmyplaces';
+import 'oskari-bundle!oskari-frontend/bundles/framework/myplacesimport/mapuserlayers';
+import 'oskari-bundle!oskari-frontend/bundles/mapping/maparcgis';
 import 'oskari-loader!oskari-frontend/packages/framework/bundle/ui-components/bundle.js';
-import 'oskari-loader!oskari-frontend/packages/mapping/ol/userstyle/bundle.js';
+import 'oskari-bundle!oskari-frontend/bundles/mapping/userstyle';
 
-import 'oskari-loader!oskari-frontend/packages/mapping/ol/drawtools/bundle.js';
-import 'oskari-loader!oskari-frontend/packages/mapping/ol/toolbar/bundle.js';
+import 'oskari-bundle!oskari-frontend/bundles/mapping/drawtools';
+import 'oskari-bundle!oskari-frontend/bundles/mapping/toolbar';
 import 'oskari-bundle!oskari-frontend/bundles/framework/statehandler';
-import 'oskari-loader!oskari-frontend/packages/mapping/ol/infobox/bundle.js';
+import 'oskari-bundle!oskari-frontend/bundles/mapping/infobox';
 
 import 'oskari-bundle!oskari-frontend/bundles/framework/search';
 import 'oskari-bundle!oskari-frontend/bundles/framework/layerlist';
@@ -40,7 +41,7 @@ import 'oskari-bundle!oskari-frontend/bundles/mapping/camera-controls-3d';
 import 'oskari-bundle!oskari-frontend/bundles/mapping/dimension-change';
 
 // tampereeeeee
-import 'oskari-loader!oskari-frontend-contrib/packages/tampere/bundle/search-from-channels/bundle.js';
+import 'oskari-bundle!oskari-frontend-contrib/bundles/tampere/search-from-channels';
 // /tampereeeeee
 
 import 'oskari-lazy-bundle?admin-layereditor!oskari-frontend/bundles/admin/admin-layereditor';
@@ -48,7 +49,7 @@ import 'oskari-lazy-bundle?admin-announcements!oskari-frontend/bundles/admin/adm
 import 'oskari-lazy-bundle?admin-permissions!oskari-frontend/bundles/admin/admin-permissions';
 import 'oskari-lazy-bundle?admin-users!oskari-frontend/bundles/admin/admin-users';
 import 'oskari-lazy-bundle?admin!oskari-frontend/bundles/admin/admin';
-import 'oskari-lazy-loader?admin-wfs-search-channel!oskari-frontend-contrib/packages/tampere/bundle/admin-wfs-search-channel/bundle.js';
+import 'oskari-lazy-bundle?admin-wfs-search-channel!oskari-frontend-contrib/bundles/tampere/admin-wfs-search-channel';
 
 import '../../bundles/hacks.js';
 import './css/overwritten.css';

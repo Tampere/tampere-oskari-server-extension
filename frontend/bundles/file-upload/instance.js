@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { getReactRoot } from 'oskari-ui/components/window';
 import { FileUploadPanel } from './components/FileUploadPanel';
 import { LayerDetails } from './components/LayerDetails';
 import { ProgressBar } from './components/ProgressBar';
@@ -108,7 +108,7 @@ function showFlyout (layerId) {
 }
 
 function updateUI (layer, progress) {
-    ReactDOM.render(
+    getReactRoot(mainUI[0]).render(
         <React.Fragment>
             <LayerDetails
                 {...layer}
@@ -121,8 +121,7 @@ function updateUI (layer, progress) {
                 files={layer.files || []}
                 layerId={layer.id}
                 onDelete={removeFile} />
-        </React.Fragment>,
-        mainUI[0]);
+        </React.Fragment>);
 }
 
 function removeFile (layerId, fileId) {
