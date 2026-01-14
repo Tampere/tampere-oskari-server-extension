@@ -7,7 +7,7 @@
   ],
   "dependencies": {
     "oskari-frontend": "git+https://git@github.com/oskariorg/oskari-frontend.git#3.2.1",
-    "oskari-frontend-contrib": "git+https://git@github.com/tuomari/oskari-frontend-contrib.git#feature/migrate-to-3.2-3"
+    "oskari-frontend-contrib": "git+https://git@github.com/tuomari/oskari-frontend-contrib.git#feature/migrate-to-3.2-4"
   },
   "devDependencies": {
     "@cyclonedx/bom": "^3.10.1",
