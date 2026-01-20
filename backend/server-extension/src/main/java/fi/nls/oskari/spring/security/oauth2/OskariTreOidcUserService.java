@@ -114,7 +114,12 @@ public class OskariTreOidcUserService extends OidcUserService {
             }
         }
 
-        String preferredUsername = oidcUser.getPreferredUsername().toLowerCase();
+        String preferredUsername = oidcUser.getPreferredUsername();
+        if (preferredUsername == null || preferredUsername.isBlank()) {
+            preferredUsername = email;
+        } else {
+            preferredUsername = preferredUsername.toLowerCase();
+        }
         if (preferredUsername.equals(user.getScreenname())) {
             user.setScreenname(preferredUsername);
             modified = true;
