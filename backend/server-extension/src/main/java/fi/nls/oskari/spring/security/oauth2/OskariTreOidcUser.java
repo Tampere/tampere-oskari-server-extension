@@ -47,7 +47,13 @@ public record OskariTreOidcUser(OidcUser oidcUser, String username,
 
     @Override
     public String getName() {
+        return oidcUser.getName();
+    }
+
+    @Override
+    public String getPreferredUsername() {
         return username;
     }
+
 
 }

@@ -38,7 +38,7 @@ public class OskariOauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
             throw new IllegalArgumentException("Expected DefaultOidcUser, got: " + principal.getClass().getName());
         }
         logger.info("Logging in OIDC user {}", oidcUser);
-        helper.onAuthenticationSuccess(request, response, oidcUser.getName());
+        helper.onAuthenticationSuccess(request, response, oidcUser.getPreferredUsername());
         super.onAuthenticationSuccess(request, response, authentication);
     }
 
