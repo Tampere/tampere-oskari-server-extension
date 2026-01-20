@@ -4,6 +4,11 @@ on:
     tags:
       - 'tampere-parent-*'
   workflow_dispatch:
+    inputs:
+      frontend_tag_name:
+        description: 'Frontend tag to use'
+        required: false
+        type: string
 
 jobs:
   create-backend-prod-release:
@@ -28,7 +33,8 @@ jobs:
 ### Download frontend packages
       - uses: robinraju/release-downloader@v1
         with:
-          latest: true
+          latest: ${{ !github.event.inputs.frontend_tag_name }}
+          tag: ${{ github.event.inputs.frontend_tag_name || '' }}
           fileName: 'oskari-frontend-*.tar.gz'
           out-file-path: './backend/'
 
