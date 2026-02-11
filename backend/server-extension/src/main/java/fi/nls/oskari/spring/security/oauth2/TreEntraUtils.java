@@ -7,18 +7,22 @@ import org.jetbrains.annotations.NotNull;
 import org.oskari.spring.security.OskariUserHelper;
 import org.oskari.user.Role;
 import org.oskari.user.User;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
+@Service
+@Profile("oauth2")
 public class TreEntraUtils extends SimpleUrlAuthenticationSuccessHandler {
     private static final Logger logger = LogFactory.getLogger(TreEntraUtils.class);
 
