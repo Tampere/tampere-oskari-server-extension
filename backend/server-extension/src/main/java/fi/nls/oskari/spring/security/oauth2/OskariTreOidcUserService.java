@@ -9,6 +9,7 @@ import fi.nls.oskari.util.PropertyUtil;
 import org.oskari.spring.security.OskariUserHelper;
 import org.oskari.user.Role;
 import org.oskari.user.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @Profile("oauth2")
@@ -27,10 +29,15 @@ public class OskariTreOidcUserService extends OidcUserService {
 
     private final DatabaseUserService userService;
     private final boolean autoregisterOauthUsers;
+    private final boolean copyRolesFromAD;
+    private final TreEntraUtils treEntraUtils;
 
-    public OskariTreOidcUserService() {
+    @Autowired
+    public OskariTreOidcUserService(TreEntraUtils treEntraUtils) {
         this.userService = getUserService();
         this.autoregisterOauthUsers = PropertyUtil.getOptional("oskari.oauth2.autoregister", false);
+        this.copyRolesFromAD = PropertyUtil.getOptional("oskari.oauth2.copy-ad-role", false);
+        this.treEntraUtils = treEntraUtils;
     }
 
     @Override
@@ -68,6 +75,9 @@ public class OskariTreOidcUserService extends OidcUserService {
             return null;
         }
 
+        if (this.copyRolesFromAD) {
+            treEntraUtils.fixRolesFromEntraid(user, oidcUser);
+        }
         // Update user info
         if (copyInfoToUser(user, oidcUser)) {
             userService.saveUser(user);
@@ -89,8 +99,8 @@ public class OskariTreOidcUserService extends OidcUserService {
 
     private boolean copyInfoToUser(User user, OidcUser oidcUser) {
         boolean modified = false;
-        String email = oidcUser.getEmail().toLowerCase();
-        if (!Objects.equals(user.getEmail(), email)) {
+        final String email = Optional.ofNullable(oidcUser.getEmail()).orElse("").toLowerCase().trim();
+        if (!email.isBlank() && !Objects.equals(user.getEmail(), email)) {
             user.setEmail(email);
             modified = true;
         }

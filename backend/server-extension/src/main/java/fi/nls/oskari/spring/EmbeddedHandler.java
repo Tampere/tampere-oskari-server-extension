@@ -18,11 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class EmbeddedHandler {
 
-    private final static Logger LOG = LogFactory.getLogger(EmbeddedHandler.class);
-
-    @Autowired
-    private MapController controller;
-
     @RequestMapping("/published/{lang}/{mapId}")
     public String embeddedMaps(@PathVariable("lang") String lang, @PathVariable("mapId") String mapId, Model model, @OskariParam ActionParameters params) {
         if (!isSupported(lang)) {

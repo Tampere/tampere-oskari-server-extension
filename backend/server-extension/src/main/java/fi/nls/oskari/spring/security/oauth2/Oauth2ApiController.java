@@ -18,8 +18,6 @@ import org.springframework.web.servlet.view.RedirectView;
 public class Oauth2ApiController {
 
 
-    private final static Logger LOG = LogFactory.getLogger(Oauth2ApiController.class);
-
     @RequestMapping("/auth")
     public RedirectView index(@OskariParam ActionParameters params, RedirectAttributes attributes) {
         if (params.getResponse().isCommitted()) {
@@ -30,28 +28,9 @@ public class Oauth2ApiController {
         return new RedirectView(url);
     }
 
-    @RequestMapping("/oauth2")
-    public RedirectView oauth2(Model model, @OskariParam ActionParameters params) throws Exception {
-        if (params.getResponse().isCommitted()) {
-            // to prevent errors in log -> request has already been handled
-            return null;
-        }
-        String url = PropertyUtil.get("oskari.domain") + PropertyUtil.get("oskari.map.url");
-        return new RedirectView(url);
-    }
 
-    @RequestMapping("/login")
+    @RequestMapping(path = {"/login", "/oauth2", "/basicauth"})
     public RedirectView login(Model model, @OskariParam ActionParameters params) throws Exception {
-        if (params.getResponse().isCommitted()) {
-            // to prevent errors in log -> request has already been handled
-            return null;
-        }
-        String url = PropertyUtil.get("oskari.domain") + PropertyUtil.get("oskari.map.url");
-        return new RedirectView(url);
-    }
-
-    @RequestMapping("/basicauth")
-    public RedirectView basicauth(Model model, @OskariParam ActionParameters params) throws Exception {
         if (params.getResponse().isCommitted()) {
             // to prevent errors in log -> request has already been handled
             return null;

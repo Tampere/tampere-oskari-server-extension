@@ -144,7 +144,10 @@ public class KtjPdfHandler extends RestActionHandler {
     }
 
     static String toShortFormat(String kiinteistotunnus) {
-        String a, b, c, d;
+        String a;
+        String b;
+        String c;
+        String d;
 
         String[] parts = kiinteistotunnus.split("-");
         if (parts.length == 1) {

@@ -28,6 +28,7 @@ public abstract class FileService {
 
     /**
      * Filename should be featureID + extension
+     *
      * @param filename
      * @return array of length 2 with base as first and extension as second
      */
@@ -36,10 +37,10 @@ public abstract class FileService {
         if (name.length > 2) {
             String ext = name[name.length - 1];
             String id = filename.substring(0, filename.length() - ext.length() - 1);
-            return new String[] { id, ext };
+            return new String[]{id, ext};
         }
         if (name.length < 2) {
-            return new String[] { name[0], "" };
+            return new String[]{name[0], ""};
         }
         return name;
     }
@@ -109,11 +110,11 @@ public abstract class FileService {
 
     private Optional<Path> getPathForExternalFiles(int layerId, String featureId) {
         OskariLayer layer = OskariComponentManager.getComponentOfType(OskariLayerService.class).find(layerId);
-        if(layer == null) {
+        if (layer == null) {
             return Optional.empty();
         }
         final String layerPath = layer.getAttributes().optString(KEY_ATTACHMENT_PATH);
-        if(layerPath == null) {
+        if (layerPath == null) {
             return Optional.empty();
         }
         // layer_basepath/feature_id/format.zip
@@ -126,13 +127,16 @@ public abstract class FileService {
 
     public List<WFSAttachment> getExternalFiles(int layerId, String featureId) {
         Optional<Path> path = getPathForExternalFiles(layerId, featureId);
-        if (!path.isPresent()) {
+        if (path.isEmpty()) {
             return Collections.EMPTY_LIST;
         }
         File dir = path.get().toFile();
         List<WFSAttachment> attachments = new ArrayList<>();
-        for (File f : dir.listFiles(f -> f.canRead() && !f.isDirectory())) {
-            attachments.add(toWFSAttachment(f, layerId, featureId));
+        File[] filesInDir = dir.listFiles(f -> f.canRead() && !f.isDirectory());
+        if (filesInDir != null) {
+            for (File f : filesInDir) {
+                attachments.add(toWFSAttachment(f, layerId, featureId));
+            }
         }
         return attachments;
     }
@@ -196,7 +200,9 @@ public abstract class FileService {
         if (!Files.exists(path)) {
             throw new ServiceException("File not found");
         }
-        path.toFile().delete();
+        if (!path.toFile().delete()) {
+            LOG.warn("Unable to delete file", path);
+        }
         WFSAttachment file = new WFSAttachment();
         file.setLayerId(layerId);
         file.setId(fileId);
