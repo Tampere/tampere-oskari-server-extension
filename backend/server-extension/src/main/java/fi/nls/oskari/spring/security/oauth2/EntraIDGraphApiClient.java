@@ -67,9 +67,7 @@ public class EntraIDGraphApiClient {
             logger.warn(e, "Interrupted while querying user information from EntraID api");
             Thread.currentThread().interrupt();
         }
-        finally {
-            client.close();
-        }
+
         return "";
     }
 
