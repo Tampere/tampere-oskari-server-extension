@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@main
       - uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '25'
           distribution: 'temurin'
           cache: 'maven'
           # Try to always hit cache
