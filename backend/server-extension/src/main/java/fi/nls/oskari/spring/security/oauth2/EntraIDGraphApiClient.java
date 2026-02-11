@@ -57,7 +57,8 @@ public class EntraIDGraphApiClient {
                 .GET()
                 .build();
 
-        try (HttpClient client = HttpClient.newHttpClient()) {
+        HttpClient client = HttpClient.newHttpClient();
+        try {
             HttpResponse<String> val = client.send(query, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
             return val.body();
         } catch (IOException e) {
@@ -65,6 +66,9 @@ public class EntraIDGraphApiClient {
         } catch (InterruptedException e) {
             logger.warn(e, "Interrupted while querying user information from EntraID api");
             Thread.currentThread().interrupt();
+        }
+        finally {
+            client.close();
         }
         return "";
     }
