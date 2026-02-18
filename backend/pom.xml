@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>fi.tampere.oskari</groupId>
     <artifactId>tampere-parent</artifactId>
-    <version>320.1.2-SNAPSHOT</version>
+    <version>320.1.2</version>
     <packaging>pom</packaging>
     <name>Tampere Oskari</name>
 
@@ -110,7 +110,7 @@
     <scm>
         <connection>scm:git:https://github.com/Tampere/tampere-oskari-server-extension.git</connection>
         <developerConnection>scm:git:https://github.com/Tampere/tampere-oskari-server-extension.git</developerConnection>
-      <tag>tampere-parent-3.2.4</tag>
+      <tag>tampere-parent-320.1.2</tag>
   </scm>
     <modules>
         <module>server-extension</module>
