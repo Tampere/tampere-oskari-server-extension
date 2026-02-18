@@ -60,8 +60,10 @@ public class TreEntraUtils extends SimpleUrlAuthenticationSuccessHandler {
             return;
         }
         OAuth2AuthorizedClient authorizedClient = clientService.loadAuthorizedClient(clientRegistration.getRegistrationId(), oidcUser.getName());
+        logger.debug("Got authorized client for user {}: {}", oidcUser.getName(), authorizedClient);
         if (authorizedClient != null) {
             @NotNull String attr7 = entraApiClient.getExtensionAttribute7(authorizedClient.getAccessToken().getTokenValue());
+            logger.info("Got attr7 for user {}: {}", oidcUser.getName(), attr7);
             user.setRoles(Stream.concat(
                             // Add all non-dynamic roles
                             user.getRoles().stream().filter(t -> !t.getName().startsWith(ATTR7_ROLE_PREFIX)),

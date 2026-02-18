@@ -38,6 +38,7 @@ public class OskariTreOidcUserService extends OidcUserService {
         this.autoregisterOauthUsers = PropertyUtil.getOptional("oskari.oauth2.autoregister", false);
         this.copyRolesFromAD = PropertyUtil.getOptional("oskari.oauth2.copyAdRole", false);
         this.treEntraUtils = treEntraUtils;
+        logger.info("Initialized TreOidcUserService with autoregister{}, copyRoles{]", autoregisterOauthUsers, copyRolesFromAD);
     }
 
     @Override
