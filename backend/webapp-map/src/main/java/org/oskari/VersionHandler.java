@@ -51,7 +51,7 @@ public class VersionHandler {
 
         Authentication user = SecurityContextHolder.getContext().getAuthentication();
 
-        if (user == null || !user.isAuthenticated()) {
+        if (user == null || !user.isAuthenticated() || user.getName().equalsIgnoreCase("anonymousUser")) {
             result.put("loggedIn", "false");
             return result;
         }
@@ -59,10 +59,15 @@ public class VersionHandler {
             result.put("usertype", "oidcUser");
             result.put("username", oidcUser.getPreferredUsername());
         } else if (user.getPrincipal() instanceof User oskariUser) {
-            result.put("usertype", "oidcUser");
+            result.put("usertype", "oskariUser");
             result.put("username", oskariUser.getScreenname());
+        } else if (user.getPrincipal() instanceof String) {
+            result.put("usertype", "string");
+            result.put("username", user.getPrincipal().toString());
         } else {
             result.put("usertype", user.getPrincipal().getClass().getName());
+            result.put("username", user.getName());
+            result.put("principal", user.getPrincipal().toString());
         }
 
 
