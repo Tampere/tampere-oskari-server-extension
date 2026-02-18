@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2ErrorCodes;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -45,7 +46,7 @@ public class OskariTreOidcUserService extends OidcUserService {
     public OidcUser loadUser(OidcUserRequest userRequest) throws OAuth2AuthenticationException {
         OidcUser oidcUser = super.loadUser(userRequest);
         try {
-            User user = getUser(oidcUser);
+            User user = getUser(oidcUser, userRequest.getAccessToken());
             if (user == null) {
                 throw new OAuth2AuthenticationException(OAuth2ErrorCodes.ACCESS_DENIED);
             }
@@ -59,7 +60,7 @@ public class OskariTreOidcUserService extends OidcUserService {
     }
 
 
-    private User getUser(OidcUser oidcUser) throws ServiceException {
+    private User getUser(OidcUser oidcUser, OAuth2AccessToken accessToken) throws ServiceException {
         User user = userService.getUserByEmail(oidcUser.getEmail());
         logger.warn("Loaded user {} from database with email {}", user, oidcUser.getEmail());
         if (autoregisterOauthUsers && user == null) {
@@ -77,7 +78,7 @@ public class OskariTreOidcUserService extends OidcUserService {
         }
 
         if (this.copyRolesFromAD) {
-            treEntraUtils.fixRolesFromEntraid(user, oidcUser);
+            treEntraUtils.fixRolesFromEntraid(user, accessToken);
         }
         // Update user info
         if (copyInfoToUser(user, oidcUser)) {

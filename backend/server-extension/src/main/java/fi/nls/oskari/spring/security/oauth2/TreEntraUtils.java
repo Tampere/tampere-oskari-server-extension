@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Service;
@@ -50,36 +51,33 @@ public class TreEntraUtils extends SimpleUrlAuthenticationSuccessHandler {
      * 2. Fetch ATTR7 info from EntraID API.
      * 3. Add the roles from ATTR7 to the user.
      */
-    public void fixRolesFromEntraid(User user, OidcUser oidcUser) {
+    public void fixRolesFromEntraid(User user, OAuth2AccessToken accessToken) {
         if (clientRegistration == null || clientRegistration.getRegistrationId() == null || clientRegistration.getRegistrationId().isBlank()) {
             logger.warn("Client registration is null or empty. Can not get roles from EntraID. {}", clientRegistration);
             return;
         }
-        if (oidcUser == null || oidcUser.getName() == null || oidcUser.getName().isBlank()) {
-            logger.warn("OidcUser name is null or empty. Can not get roles from EntraID. '{}'", oidcUser);
+        if (accessToken == null || accessToken.getTokenValue() == null) {
+            logger.warn("accessToken null. Can not get roles from EntraID. '{}'", accessToken);
             return;
         }
-        OAuth2AuthorizedClient authorizedClient = clientService.loadAuthorizedClient(clientRegistration.getRegistrationId(), oidcUser.getName());
-        logger.debug("Got authorized client for user {}: {}", oidcUser.getName(), authorizedClient);
-        if (authorizedClient != null) {
-            @NotNull String attr7 = entraApiClient.getExtensionAttribute7(authorizedClient.getAccessToken().getTokenValue());
-            logger.info("Got attr7 for user {}: {}", oidcUser.getName(), attr7);
-            user.setRoles(Stream.concat(
-                            // Add all non-dynamic roles
-                            user.getRoles().stream().filter(t -> !t.getName().startsWith(ATTR7_ROLE_PREFIX)),
-                            // add dynamic roles from the attr7 ( organisation id )
-                            Arrays.stream(attr7.split(","))
-                                    .map(String::trim)
-                                    .filter(r -> !r.isEmpty())
-                                    .map(r -> {
-                                        Role role = new Role();
-                                        role.setName(ATTR7_ROLE_PREFIX + r);
-                                        return role;
-                                    }))
-                    .collect(Collectors.toSet()));
-        } else {
-            logger.warn("Authorized client is null when fetching organisation id for user ", user);
-        }
+        // OAuth2AuthorizedClient authorizedClient = clientService.loadAuthorizedClient(clientRegistration.getRegistrationId(), oidcUser.getName());
+
+        @NotNull String attr7 = entraApiClient.getExtensionAttribute7(accessToken.getTokenValue());
+        logger.info("Got attr7 for user {}: {}", user.getScreenname(), attr7);
+        user.setRoles(Stream.concat(
+                        // Add all non-dynamic roles
+                        user.getRoles().stream().filter(t -> !t.getName().startsWith(ATTR7_ROLE_PREFIX)),
+                        // add dynamic roles from the attr7 ( organisation id )
+                        Arrays.stream(attr7.split(","))
+                                .map(String::trim)
+                                .filter(r -> !r.isEmpty())
+                                .map(r -> {
+                                    Role role = new Role();
+                                    role.setName(ATTR7_ROLE_PREFIX + r);
+                                    return role;
+                                }))
+                .collect(Collectors.toSet()));
+
 
         // Make sure user has the defaultUser role.
         final Role defaultUserRole = Role.getDefaultUserRole();
