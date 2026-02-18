@@ -14,15 +14,34 @@ and the following properties should be configured in the environment:
 | `OSKARI_DB_PASSWORD` | Database password          | `pwd1234`                                 |
 | `OSKARI_DB_URL`      | Database connection string | `jdbc:postgresql://127.0.0.1:5432/dbname` |
 
+# Deployment and running
 
-## Updating Oskari version in container image
+The application is deployed as a container image which containes both fronend and backend.
+Both are stored in this git repository. Fronend will be built as a release resource, and backend
+will be deployed as a container image.
+
+## Updating oskari frontend
+
+1. Commit changes to git
+2. Trigger a new build of the frontend in [Github actions](https://github.com/Tampere/tampere-oskari-server-extension/actions).
+
+### Frontend versioning
+Frontend version can be changed manually by updating [package.json](frontend/package.json) version property.
+
+## Updating Oskari Backend
 
 1. Modify pom.xml in project root, and change property to match the wanted oskari version.
-2. Commit the version change, and other possible changes to git
-3. Create git tag: `git tag v2.13.1-tre3`.
-    * NOTE: Version must start with `v` for github actions to trigger image generation
-4. Push the tag to git: `git push origin v2.13.1-tre3`
-5. GitHub actions will now generate the container image.
+2. Commit the change to git.
+3. Trigger a new build of the backend in [Github actions](https://github.com/Tampere/tampere-oskari-server-extension/actions). 
+
+### backend versioning
+ * Major version should match the oskari deployed version. For example 3.2.4 -> 324.0.0
+ * Minor version should be increased when changes which might break something are added.
+ * Patch version should be increased only when changes are safe enough to be deployed without major testing
+
+Patch version is increased automatically by Github actions. Major and minor version can be changed manually with 
+`mvn versions:set -DnewVersion=1.2.3-SNAPSHOT`. Version should be set to SNAPSHOT, so the github actions work
+and increment the version correctly.
 
 ## Logging in to github container registry
 
@@ -35,83 +54,3 @@ An access token can be created to allow read-only access to the container regist
 2. Install the token to servers `podman login ghcr.io -u your-github-username-here`
     * Paste the copied access token.
 
-
-
-# tampere-oskari-server-extension
-
-Tampere Oskari server extension
-
-Extends Oskari server functionality to serve WFS search.
-
-## Releases
-
-### 1.1
-
-Upgraded Oskari to 1.40.0. 
-
-Drop oskari_status_tampere table from the database to reinit the module. Code from 1.0 has been moved to oskari-server.
-
-### 1.0
-
-Initial release with Oskari 1.34.0
-
-## Prerequisites
-
-These uses Oskari 1.40.0 version.
-
-### Front-end
-
-This extension needs new front-end codes of Oskari (see tampere bundles in https://github.com/dimenteq/tampere-oskari).
-
-### Back-end
-
-This version upgrade drops all ready defined search channels (database upgrades has moved to Flyway).
-
-##### Database
-
-Nothing need to be done. This application upgrades it's database automatically.
-
-##### oskari-ext.properties file changes
-
-```Shell
-actionhandler.GetAppSetup.dynamic.bundles = admin-layerselector, admin-layerrights, admin, admin-users, admin-wfs-search-channel
-actionhandler.GetAppSetup.dynamic.bundle.admin.roles = Admin
-actionhandler.GetAppSetup.dynamic.bundle.admin-wfs-search-channel.roles = Admin
-search.channel.WFSSEARCH_CHANNEL.service.url= [URL_FOR_SERVICE]
-search.channel.WFSSEARCH_CHANNEL.maxFeatures = 100
-search.channels.default=WFSSEARCH_CHANNEL
-actionhandler.GetSearchResult.channels=WFSSEARCH_CHANNEL
-db.additional.modules=tampere
-```
-
-## Installation
-
-* Clone https://github.com/dimenteq/tampere-oskari-server-extension/tree/develop
-```Bash
-git clone https://github.com/dimenteq/tampere-oskari-server-extension.git
-```
-* Change develop branch
-```
-cd tampere-oskari-server-extension
-git checkout develop
-```
-* Run mvn clean install in tampere-oskari-server-extension folder
-```Bash
-mvn clean install
-```
-
-* If you see following error "Could not resolve dependencies for project fi.nls.oskari.spring:webapp.map:w
-ar:1.2.0-SNAPSHOT: Could not find artifact", fix this to edit again oskari-spring/webapp-spring/pom.xml file (remove line above):
-```Bash
-# Remove following line
-<version>1.2.0-SNAPSHOT</version>
-```
-* Stop Jetty
-* Remove Oskari spring-map folder if exists (github clone)
-* Remove <JETTY>/webapps/spring-map.war
-* Remove <JETTY>/webapp/transport.war
-* Rename from <JETTY>/contexts/spring-map.xml to <JETTY>/contexts/oskari-map.xml
-* Edit <JETTY>/contexts/oskari-map.xml -file and change /webapps/spring-map.war to /webapps/oskari-map.war
-* Copy oskari-server-extension/webapp-map/target/oskari-map.war to <JETTY>/webapps/oskari-map.war
-* Copy oskari-server-extension/webapp-transport/target/transport.war to <JETTY>/webapps/transport.war
-* Start Jetty
