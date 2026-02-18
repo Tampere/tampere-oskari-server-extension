@@ -4,14 +4,12 @@ package fi.nls.oskari.spring.security.oauth2;
 import fi.nls.oskari.log.LogFactory;
 import fi.nls.oskari.log.Logger;
 import org.jetbrains.annotations.NotNull;
-import org.oskari.spring.security.OskariUserHelper;
 import org.oskari.user.Role;
 import org.oskari.user.User;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
-import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Service;
@@ -29,7 +27,6 @@ public class TreEntraUtils extends SimpleUrlAuthenticationSuccessHandler {
     private final OAuth2AuthorizedClientService clientService;
     private final ClientRegistration clientRegistration;
 
-    private final OskariUserHelper helper = new OskariUserHelper();
     private final EntraIDGraphApiClient entraApiClient;
 
     public TreEntraUtils(
@@ -46,15 +43,22 @@ public class TreEntraUtils extends SimpleUrlAuthenticationSuccessHandler {
     private static final String ATTR7_ROLE_PREFIX = "ROLE_";
 
 
-
     /**
      * ATTR7 is the users organisation unit id in EntraID
-     *
+     * <p>
      * 1. Remove existing roles having ATTR7-prefix
      * 2. Fetch ATTR7 info from EntraID API.
      * 3. Add the roles from ATTR7 to the user.
      */
     public void fixRolesFromEntraid(User user, OidcUser oidcUser) {
+        if (clientRegistration == null || clientRegistration.getRegistrationId() == null || clientRegistration.getRegistrationId().isBlank()) {
+            logger.warn("Client registration is null or empty. Can not get roles from EntraID. {}", clientRegistration);
+            return;
+        }
+        if (oidcUser == null || oidcUser.getName() == null || oidcUser.getName().isBlank()) {
+            logger.warn("OidcUser name is null or empty. Can not get roles from EntraID. '{}'", oidcUser);
+            return;
+        }
         OAuth2AuthorizedClient authorizedClient = clientService.loadAuthorizedClient(clientRegistration.getRegistrationId(), oidcUser.getName());
         if (authorizedClient != null) {
             @NotNull String attr7 = entraApiClient.getExtensionAttribute7(authorizedClient.getAccessToken().getTokenValue());
@@ -77,7 +81,7 @@ public class TreEntraUtils extends SimpleUrlAuthenticationSuccessHandler {
 
         // Make sure user has the defaultUser role.
         final Role defaultUserRole = Role.getDefaultUserRole();
-        if(user.getRoles().stream().noneMatch(t -> t.getName().equals(defaultUserRole.getName()))) {
+        if (user.getRoles().stream().noneMatch(t -> t.getName().equals(defaultUserRole.getName()))) {
             user.addRole(Role.getDefaultUserRole());
         }
     }
