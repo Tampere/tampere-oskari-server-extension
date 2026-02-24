@@ -56,4 +56,6 @@ public record OskariTreOidcUser(OidcUser oidcUser, String username,
     }
 
 
+
+
 }

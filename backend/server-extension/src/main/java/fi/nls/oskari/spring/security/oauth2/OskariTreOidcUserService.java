@@ -19,7 +19,9 @@ import org.springframework.security.oauth2.core.OAuth2ErrorCodes;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -59,15 +61,39 @@ public class OskariTreOidcUserService extends OidcUserService {
 
     }
 
+    private static final Locale FI = new Locale("fi", "FI");
+
+    private static String getEmail(OidcUser oidcUser) {
+
+        if (oidcUser.getEmail() != null && !oidcUser.getEmail().isBlank()) {
+            return oidcUser.getEmail().toLowerCase(FI);
+        } else if (oidcUser.getPreferredUsername() != null && !oidcUser.getPreferredUsername().isBlank() && oidcUser.getPreferredUsername().contains("@")) {
+            return oidcUser.getPreferredUsername().toLowerCase(FI);
+        }
+        return null;
+    }
+
+    private static String getUsername(OidcUser oidcUser) {
+        if (oidcUser.getPreferredUsername() != null && !oidcUser.getPreferredUsername().isBlank()) {
+            return oidcUser.getPreferredUsername().toLowerCase(FI);
+        } else if (oidcUser.getEmail() != null && !oidcUser.getEmail().isBlank()) {
+            return oidcUser.getEmail().toLowerCase(FI);
+        }
+        // This is the entraID subject, ie ID of the user, and should not be used, if possible
+        return oidcUser.getName().toLowerCase(FI);
+    }
 
     private User getUser(OidcUser oidcUser, OAuth2AccessToken accessToken) throws ServiceException {
-        User user = userService.getUserByEmail(oidcUser.getEmail());
+        User user = userService.getUserByEmail(getEmail(oidcUser));
+        if (user == null) {
+            user = userService.getUser(getUsername(oidcUser));
+        }
+
         logger.warn("Loaded user {} from database with email {}", user, oidcUser.getEmail());
         if (autoregisterOauthUsers && user == null) {
             user = new User();
             user.setCreated(OffsetDateTime.now());
             user.addRole(Role.getDefaultUserRole());
-            // TODO: Add roles from OidcUser?
         }
         Role defaultRole = Role.getDefaultUserRole();
         if (user == null || !user.hasRole(defaultRole.getName())) {
@@ -95,14 +121,12 @@ public class OskariTreOidcUserService extends OidcUserService {
         } catch (ServiceException e) {
             throw new RuntimeException("Error getting UserService. Is it configured?", e);
         }
-
-
     }
 
     private boolean copyInfoToUser(User user, OidcUser oidcUser) {
         boolean modified = false;
-        final String email = Optional.ofNullable(oidcUser.getEmail()).orElse("").toLowerCase().trim();
-        if (!email.isBlank() && !Objects.equals(user.getEmail(), email)) {
+        final String email = getEmail(oidcUser);
+        if (email != null && !email.isBlank() && !Objects.equals(user.getEmail(), email)) {
             user.setEmail(email);
             modified = true;
         }
@@ -126,13 +150,8 @@ public class OskariTreOidcUserService extends OidcUserService {
             }
         }
 
-        String preferredUsername = oidcUser.getPreferredUsername();
-        if (preferredUsername == null || preferredUsername.isBlank()) {
-            preferredUsername = email;
-        } else {
-            preferredUsername = preferredUsername.toLowerCase();
-        }
-        if (preferredUsername.equals(user.getScreenname())) {
+        final String preferredUsername = getUsername(oidcUser);
+        if (!preferredUsername.equals(user.getScreenname())) {
             user.setScreenname(preferredUsername);
             modified = true;
         }

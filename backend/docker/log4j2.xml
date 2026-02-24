@@ -4,13 +4,23 @@
         <Property name="LOG_DIR">/log/</Property>
     </Properties>
     <Appenders>
-        <File name="File" fileName="${LOG_DIR}/oskari.log">
+        <RollingFile name="File" fileName="${LOG_DIR}/oskari.log"
+                     filePattern="${LOG_DIR}/oskari.log.%d{yyyy-MM-dd}">
             <PatternLayout pattern="%d %-5p %c - %m%n"/>
-        </File>
-        <File name="ACCESS" fileName="${LOG_DIR}/layers.log">
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy max="90"/>
+        </RollingFile>
+        <RollingFile name="ACCESS" fileName="${LOG_DIR}/layers.log"
+                     filePattern="${LOG_DIR}/layers.log.%d{yyyy-MM-dd}">
             <!-- timestamp + " - " + message + newline -->
             <PatternLayout pattern="%d - %m%n"/>
-        </File>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy max="90"/>
+        </RollingFile>
         <Console name="CONSOLE">
             <PatternLayout pattern="%d %-5p %c - %m%n"/>
         </Console>
