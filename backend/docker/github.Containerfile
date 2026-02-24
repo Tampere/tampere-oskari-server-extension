@@ -1,4 +1,4 @@
-FROM docker.io/library/tomcat:10-jre25
+FROM docker.io/library/tomcat:10-jdk17
 
 COPY webapp-map/target/oskari-map/WEB-INF/lib/postgresql-*.jar lib/
 COPY ./docker/log4j2.xml lib/
