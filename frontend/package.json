@@ -1,17 +1,17 @@
 {
   "name": "oskari-frontend-tampere",
-  "version": "3.2.8",
+  "version": "3.3.0",
   "description": "kartat.tampere.fi/oskari bundles & app conf",
   "keywords": [
     "Oskari"
   ],
   "dependencies": {
-    "oskari-frontend": "git+https://git@github.com/oskariorg/oskari-frontend.git#3.2.1",
+    "oskari-frontend": "git+https://git@github.com/oskariorg/oskari-frontend.git#3.3.0",
     "oskari-frontend-contrib": "git+https://git@github.com/tuomari/oskari-frontend-contrib.git#feature/migrate-to-3.2-4"
   },
   "devDependencies": {
     "@cyclonedx/bom": "^3.10.1",
-    "eslint": "9.37.0"
+    "eslint": "9.39.4"
   },
   "scripts": {
     "dev-mode": "node ./node_modules/oskari-frontend/scripts/oskari-dev-mode",
