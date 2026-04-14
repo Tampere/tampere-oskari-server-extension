@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 export const LayerDetails = props => {
     return (
         <div>
-            <h3>{`Taso: ${props.name}` || 'Virhe: Tasoa ei valittu'}</h3>
+            <h3>{props.name ? `Taso: ${props.name}` : 'Virhe: Tasoa ei valittu'}</h3>
             <label>
         Ominaisuustieto jolla tiedostot liitetään:
                 <input
