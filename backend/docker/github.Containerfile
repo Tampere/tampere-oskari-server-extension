@@ -2,6 +2,7 @@ FROM docker.io/library/tomcat:10-jdk17
 
 COPY webapp-map/target/oskari-map/WEB-INF/lib/postgresql-*.jar lib/
 COPY ./docker/log4j2.xml lib/
+COPY ./docker/server.xml conf/server.xml
 
 # COPY ./docker/oskari-ext.properties resources/
 
