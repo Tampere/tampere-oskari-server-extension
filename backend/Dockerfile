@@ -1,3 +1,8 @@
+######################################
+# THIS IS FOR LOCAL DEVELOPMENT ONLY!
+# docker/github.Containerfile is user for github actions build
+######################################
+
 FROM docker.io/library/maven:3.9-eclipse-temurin-17-alpine AS buildimage
 #FROM maven:3-openjdk-8-slim as buildimage
 WORKDIR /opt/oskari/
@@ -41,16 +46,5 @@ ENV OSKARI_OSKARI_AJAX_URL_PREFIX="/${OSKARI_CONTEXT}/action?"
 ENV OSKARI_OSKARI_CLIENT_VERSION="dist/3.1.0-tre01"
 ENV OSKARI_OSKARI_CLIENT_DOMAIN="/${OSKARI_CONTEXT}"
 
-# COPY ./docker/tomcat-descriptor.xml conf/Catalina/localhost/${OSKARI_CONTEXT}.xml
-#COPY ./docker/tomcat-descriptor.xml webapps/oskari-map.xml
-#COPY ./docker/oskari.ini start.d/
-#COPY ./docker/jetty-oskari.xml etc/
-# Trust X-Forwarded headers
-#COPY docker/forwarded-customizer.ini start.d/
-#COPY docker/forwarded-customizer.xml etc/
 COPY ./docker/log4j2.xml lib/
 COPY ./docker/server.xml conf/server.xml
-#COPY ./docker/oskari-ext.properties lib/
-
-# context path in tomcat-descriptor.xml
-#ENV OSKARI_CONTEXT_PATH="$}"
