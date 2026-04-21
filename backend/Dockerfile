@@ -49,6 +49,7 @@ ENV OSKARI_OSKARI_CLIENT_DOMAIN="/${OSKARI_CONTEXT}"
 #COPY docker/forwarded-customizer.ini start.d/
 #COPY docker/forwarded-customizer.xml etc/
 COPY ./docker/log4j2.xml lib/
+COPY ./docker/server.xml conf/server.xml
 #COPY ./docker/oskari-ext.properties lib/
 
 # context path in tomcat-descriptor.xml
