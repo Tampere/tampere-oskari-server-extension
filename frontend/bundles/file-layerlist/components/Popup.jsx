@@ -9,22 +9,30 @@ let overlay;
 
 export const hidePopup = () => {
     overlay && overlay.setPosition(undefined);
-    const closer = document.getElementById('popup-closer');
-    closer && closer.blur();
     return false;
 };
 
-// hacky way to force popup rendered with React on OpenLayers map
+// Create popup DOM imperatively so elements exist synchronously before OL overlay is created
 const addMapOverlay = () => {
-    const wrapper = document.createElement('div');
-    document.body.appendChild(wrapper);
-    getReactRoot(wrapper).render(<div id="popup" className="ol-popup">
-        <a href="#" id="popup-closer" className="ol-popup-closer"></a>
-        <div id="popup-content"></div>
-    </div>);
+    const container = document.createElement('div');
+    container.id = 'popup';
+    container.className = 'ol-popup';
+
+    const closer = document.createElement('a');
+    closer.href = '#';
+    closer.id = 'popup-closer';
+    closer.className = 'ol-popup-closer';
+    closer.onclick = hidePopup;
+
+    const content = document.createElement('div');
+    content.id = 'popup-content';
+
+    container.appendChild(closer);
+    container.appendChild(content);
+    document.body.appendChild(container);
 
     overlay = new Overlay({
-        element: document.getElementById('popup'),
+        element: container,
         autoPan: true,
         autoPanAnimation: {
             duration: 250
@@ -42,8 +50,4 @@ export const showPopup = (x, y, content) => {
     const el = document.getElementById('popup-content');
     getReactRoot(el).render(<LocaleProvider value={{ bundleKey: 'file-layerlist' }}><ObjectData item={content} addBasketLink={true} /></LocaleProvider>);
     overlay.setPosition([x, y]);
-    const closeBtn = document.getElementById('popup-closer');
-    if (!closeBtn.onclick) {
-        closeBtn.onclick = hidePopup;
-    }
 };
