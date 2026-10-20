@@ -4,6 +4,12 @@ COPY webapp-map/target/oskari-map/WEB-INF/lib/postgresql-*.jar lib/
 COPY ./docker/log4j2.xml lib/
 COPY ./docker/server.xml conf/server.xml
 
+# Delete Tomcat's own dated logs (catalina.*, localhost.*, ...) after 30 days.
+# Drop the default maxDays lines first, otherwise the later default (90) wins.
+RUN sed -i -E -e '/^[0-9]+[a-z-]+\.org\.apache\.juli\.(Async)?FileHandler\.maxDays *=/d' \
+      -e 's/^([0-9]+[a-z-]+\.org\.apache\.juli\.(Async)?FileHandler)\.directory = .*/&\n\1.maxDays = 30/' \
+      conf/logging.properties
+
 # COPY ./docker/oskari-ext.properties resources/
 
 ARG OSKARI_CONTEXT="oskari"

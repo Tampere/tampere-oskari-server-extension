@@ -5,21 +5,32 @@
     </Properties>
     <Appenders>
         <RollingFile name="File" fileName="${LOG_DIR}/oskari.log"
-                     filePattern="${LOG_DIR}/oskari.log.%d{yyyy-MM-dd}">
+                     filePattern="${LOG_DIR}/oskari.log.%d{yyyy-MM-dd}.gz">
             <PatternLayout pattern="%d %-5p %c - %m%n"/>
             <Policies>
                 <TimeBasedTriggeringPolicy/>
             </Policies>
-            <DefaultRolloverStrategy max="90"/>
+            <!-- max only limits %i-indexed files, so date-based logs are removed with Delete -->
+            <DefaultRolloverStrategy>
+                <Delete basePath="${LOG_DIR}" maxDepth="1">
+                    <IfFileName glob="oskari.log.*"/>
+                    <IfLastModified age="30d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
         </RollingFile>
         <RollingFile name="ACCESS" fileName="${LOG_DIR}/layers.log"
-                     filePattern="${LOG_DIR}/layers.log.%d{yyyy-MM-dd}">
+                     filePattern="${LOG_DIR}/layers.log.%d{yyyy-MM-dd}.gz">
             <!-- timestamp + " - " + message + newline -->
             <PatternLayout pattern="%d - %m%n"/>
             <Policies>
                 <TimeBasedTriggeringPolicy/>
             </Policies>
-            <DefaultRolloverStrategy max="90"/>
+            <DefaultRolloverStrategy>
+                <Delete basePath="${LOG_DIR}" maxDepth="1">
+                    <IfFileName glob="layers.log.*"/>
+                    <IfLastModified age="30d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
         </RollingFile>
         <Console name="CONSOLE">
             <PatternLayout pattern="%d %-5p %c - %m%n"/>
